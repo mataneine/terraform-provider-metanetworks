@@ -75,6 +75,9 @@ func resourceMappedService() *schema.Resource {
 		Read:   resourceMappedServiceRead,
 		Update: resourceMappedServiceUpdate,
 		Delete: resourceMappedServiceDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 
