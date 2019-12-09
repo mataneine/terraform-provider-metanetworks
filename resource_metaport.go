@@ -25,11 +25,6 @@ func metaportGetLock(id string) *sync.Mutex {
 
 func resourceMetaport() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceMetaportCreate,
-		Read:   resourceMetaportRead,
-		Update: resourceMetaportUpdate,
-		Delete: resourceMetaportDelete,
-
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -85,6 +80,10 @@ func resourceMetaport() *schema.Resource {
 				Computed: true,
 			},
 		},
+		Create: resourceMetaportCreate,
+		Read:   resourceMetaportRead,
+		Update: resourceMetaportUpdate,
+		Delete: resourceMetaportDelete,
 	}
 }
 
@@ -94,25 +93,25 @@ func resourceMetaportCreate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mapped_elements := make([]string, 0)
+	mappedElements := make([]string, 0)
 	enabled := d.Get("enabled").(bool)
-	allow_support := d.Get("allow_support").(bool)
+	allowSupport := d.Get("allow_support").(bool)
 
-	meta_port := metanetworks.MetaPort{
+	metaport := metanetworks.MetaPort{
 		Name:           name,
 		Description:    description,
-		MappedElements: mapped_elements,
+		MappedElements: mappedElements,
 		Enabled:        enabled,
-		AllowSupport:   allow_support,
+		AllowSupport:   allowSupport,
 	}
-	var new_metaport *metanetworks.MetaPort
-	new_metaport, err := client.CreateMetaPort(&meta_port)
+	var newMetaport *metanetworks.MetaPort
+	newMetaport, err := client.CreateMetaPort(&metaport)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(new_metaport.Id)
-	err = metaportToResource(d, new_metaport)
+	d.SetId(newMetaport.Id)
+	err = metaportToResource(d, newMetaport)
 	if err != nil {
 		return err
 	}
@@ -123,16 +122,16 @@ func resourceMetaportRead(d *schema.ResourceData, m interface{}) error {
 
 	client := m.(*metanetworks.Client)
 
-	var new_metaport *metanetworks.MetaPort
+	var newMetaport *metanetworks.MetaPort
 
 	mutex := metaportGetLock(d.Id())
 	defer mutex.Unlock()
 
-	new_metaport, err := client.GetMetaPort(d.Id())
+	newMetaport, err := client.GetMetaPort(d.Id())
 	if err != nil {
 		return err
 	}
-	err = metaportToResource(d, new_metaport)
+	err = metaportToResource(d, newMetaport)
 	if err != nil {
 		return err
 	}
@@ -146,32 +145,32 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mapped_elements_list := d.Get("mapped_elements").(*schema.Set).List()
-	mapped_elements := make([]string, len(mapped_elements_list))
-	for i, v := range mapped_elements {
-		mapped_elements[i] = string(v[i])
+	mappedElementsList := d.Get("mapped_elements").(*schema.Set).List()
+	mappedElements := make([]string, len(mappedElementsList))
+	for i, v := range mappedElements {
+		mappedElements[i] = string(v[i])
 	}
 
 	enabled := d.Get("enabled").(bool)
-	allow_support := d.Get("allow_support").(bool)
+	allowSupport := d.Get("allow_support").(bool)
 
-	meta_port := metanetworks.MetaPort{
+	metaport := metanetworks.MetaPort{
 		Name:           name,
 		Description:    description,
 		Enabled:        enabled,
-		MappedElements: mapped_elements,
-		AllowSupport:   allow_support,
+		MappedElements: mappedElements,
+		AllowSupport:   allowSupport,
 	}
 
 	mutex := metaportGetLock(d.Id())
 	defer mutex.Unlock()
 
-	var updated_metaport *metanetworks.MetaPort
-	updated_metaport, err := client.UpdateMetaPort(d.Id(), &meta_port)
+	var updatedMetaport *metanetworks.MetaPort
+	updatedMetaport, err := client.UpdateMetaPort(d.Id(), &metaport)
 	if err != nil {
 		return err
 	}
-	err = metaportToResource(d, updated_metaport)
+	err = metaportToResource(d, updatedMetaport)
 	if err != nil {
 		return err
 	}

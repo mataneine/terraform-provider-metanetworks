@@ -8,11 +8,6 @@ import (
 
 func resourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceGroupCreate,
-		Read:   resourceGroupRead,
-		Update: resourceGroupUpdate,
-		Delete: resourceGroupDelete,
-
 		Schema: map[string]*schema.Schema{
 			"description": &schema.Schema{
 				Type:        schema.TypeString,
@@ -66,6 +61,10 @@ func resourceGroup() *schema.Resource {
 				Optional:    true,
 			},
 		},
+		Create: resourceGroupCreate,
+		Read:   resourceGroupRead,
+		Update: resourceGroupUpdate,
+		Delete: resourceGroupDelete,
 	}
 }
 
@@ -83,14 +82,14 @@ func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
 		Expression:  expression,
 	}
 
-	var new_group *metanetworks.Group
-	new_group, err := client.CreateGroup(&group)
+	var newGroup *metanetworks.Group
+	newGroup, err := client.CreateGroup(&group)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(new_group.Id)
-	err = GroupToResource(d, new_group)
+	d.SetId(newGroup.Id)
+	err = GroupToResource(d, newGroup)
 	if err != nil {
 		return err
 	}
@@ -112,12 +111,12 @@ func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 
 	client := m.(*metanetworks.Client)
 
-	var new_Group *metanetworks.Group
-	new_Group, err := client.GetGroup(d.Id())
+	var newGroup *metanetworks.Group
+	newGroup, err := client.GetGroup(d.Id())
 	if err != nil {
 		return err
 	}
-	err = GroupToResource(d, new_Group)
+	err = GroupToResource(d, newGroup)
 	if err != nil {
 		return err
 	}
@@ -139,15 +138,15 @@ func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
 		Expression:  expression,
 	}
 
-	var updated_group *metanetworks.Group
-	updated_group, err := client.UpdateGroup(d.Id(), &group)
+	var updatedGroup *metanetworks.Group
+	updatedGroup, err := client.UpdateGroup(d.Id(), &group)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(updated_group.Id)
+	d.SetId(updatedGroup.Id)
 
-	err = GroupToResource(d, updated_group)
+	err = GroupToResource(d, updatedGroup)
 	if err != nil {
 		return err
 	}
@@ -177,6 +176,7 @@ func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
+// GroupToResource ...
 func GroupToResource(d *schema.ResourceData, m *metanetworks.Group) error {
 
 	d.Set("description", m.Description)
