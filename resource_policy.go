@@ -62,6 +62,9 @@ func resourcePolicy() *schema.Resource {
 		Read:   resourcePolicyRead,
 		Update: resourcePolicyUpdate,
 		Delete: resourcePolicyDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 

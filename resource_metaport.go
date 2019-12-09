@@ -84,6 +84,9 @@ func resourceMetaport() *schema.Resource {
 		Read:   resourceMetaportRead,
 		Update: resourceMetaportUpdate,
 		Delete: resourceMetaportDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 
