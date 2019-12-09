@@ -8,10 +8,6 @@ import (
 
 func resourceMetaportOTAC() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceMetaportOTACCreate,
-		Read:   resourceMetaportOTACRead,
-		Delete: resourceMetaportOTACDelete,
-
 		Schema: map[string]*schema.Schema{
 			"metaport_id": &schema.Schema{
 				Type:        schema.TypeString,
@@ -33,19 +29,22 @@ func resourceMetaportOTAC() *schema.Resource {
 				Sensitive:   true,
 			},
 		},
+		Create: resourceMetaportOTACCreate,
+		Read:   resourceMetaportOTACRead,
+		Delete: resourceMetaportOTACDelete,
 	}
 }
 func resourceMetaportOTACCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*metanetworks.Client)
 
-	metaport_id := d.Get("metaport_id").(string)
-	otac_secret, err := client.GenerateMetaPortOTAC(metaport_id)
+	metaportID := d.Get("metaport_id").(string)
+	otacSecret, err := client.GenerateMetaPortOTAC(metaportID)
 	if err != nil {
 		return err
 	}
 
-	d.Set("secret", otac_secret)
-	d.SetId(otac_secret[0:5])
+	d.Set("secret", otacSecret)
+	d.SetId(otacSecret[0:5])
 
 	return nil
 }

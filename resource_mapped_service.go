@@ -8,11 +8,6 @@ import (
 
 func resourceMappedService() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceMappedServiceCreate,
-		Read:   resourceMappedServiceRead,
-		Update: resourceMappedServiceUpdate,
-		Delete: resourceMappedServiceDelete,
-
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -76,6 +71,10 @@ func resourceMappedService() *schema.Resource {
 				Computed: true,
 			},
 		},
+		Create: resourceMappedServiceCreate,
+		Read:   resourceMappedServiceRead,
+		Update: resourceMappedServiceUpdate,
+		Delete: resourceMappedServiceDelete,
 	}
 }
 
@@ -85,22 +84,22 @@ func resourceMappedServiceCreate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mapped_service := d.Get("mapped_service").(string)
+	mappedService := d.Get("mapped_service").(string)
 
-	network_element := metanetworks.NetworkElement{
+	networkElement := metanetworks.NetworkElement{
 		Name:          name,
 		Description:   description,
-		MappedService: mapped_service,
+		MappedService: mappedService,
 	}
-	var new_mapped_service *metanetworks.NetworkElement
-	new_mapped_service, err := client.CreateNetworkElement(&network_element)
+	var newMappedService *metanetworks.NetworkElement
+	newMappedService, err := client.CreateNetworkElement(&networkElement)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(new_mapped_service.Id)
+	d.SetId(newMappedService.Id)
 
-	err = networkElementToResource(d, new_mapped_service)
+	err = networkElementToResource(d, newMappedService)
 	if err != nil {
 		return err
 	}
@@ -116,12 +115,12 @@ func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
 
 	client := m.(*metanetworks.Client)
 
-	var new_network_element *metanetworks.NetworkElement
-	new_network_element, err := client.GetNetworkElement(d.Id())
+	var newNetworkElement *metanetworks.NetworkElement
+	newNetworkElement, err := client.GetNetworkElement(d.Id())
 	if err != nil {
 		return err
 	}
-	err = networkElementToResource(d, new_network_element)
+	err = networkElementToResource(d, newNetworkElement)
 	if err != nil {
 		return err
 	}
@@ -139,20 +138,20 @@ func resourceMappedServiceUpdate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mapped_service := d.Get("mapped_service").(string)
+	mappedService := d.Get("mapped_service").(string)
 
-	network_element := metanetworks.NetworkElement{
+	networkElement := metanetworks.NetworkElement{
 		Name:          name,
 		Description:   description,
-		MappedService: mapped_service,
+		MappedService: mappedService,
 	}
-	var updated_mapped_service *metanetworks.NetworkElement
-	updated_mapped_service, err := client.UpdateNetworkElement(d.Id(), &network_element)
+	var updatedMappedService *metanetworks.NetworkElement
+	updatedMappedService, err := client.UpdateNetworkElement(d.Id(), &networkElement)
 	if err != nil {
 		return err
 	}
 
-	err = networkElementToResource(d, updated_mapped_service)
+	err = networkElementToResource(d, updatedMappedService)
 	if err != nil {
 		return err
 	}
