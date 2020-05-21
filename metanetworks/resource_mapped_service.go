@@ -1,8 +1,6 @@
-package main
+package metanetworks
 
 import (
-	"terraform-provider-metanetworks/metanetworks"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -10,21 +8,16 @@ func resourceMappedService() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The name of the Service.",
-				Required:    true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"description": &schema.Schema{
-				Type:        schema.TypeString,
-				Default:     "",
-				Description: "Brief description for identification purposes",
-				Optional:    true,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"tags": &schema.Schema{
-				Type: schema.TypeMap,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
+				Type:     schema.TypeMap,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
 			"created_at": &schema.Schema{
@@ -48,15 +41,13 @@ func resourceMappedService() *schema.Resource {
 				Computed: true,
 			},
 			"mapped_service": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "DNS Name or IP Address of the target service",
-				Required:    true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"aliases": &schema.Schema{
-				Type:        schema.TypeSet,
-				Description: "List of aliases that resolve to the mapped service",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Computed:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Computed: true,
 			},
 			"net_id": &schema.Schema{
 				Type:     schema.TypeString,
@@ -82,52 +73,47 @@ func resourceMappedService() *schema.Resource {
 }
 
 func resourceMappedServiceCreate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	mappedService := d.Get("mapped_service").(string)
 
-	networkElement := metanetworks.NetworkElement{
+	networkElement := NetworkElement{
 		Name:          name,
 		Description:   description,
 		MappedService: mappedService,
 	}
-	var newMappedService *metanetworks.NetworkElement
+	var newMappedService *NetworkElement
 	newMappedService, err := client.CreateNetworkElement(&networkElement)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newMappedService.Id)
+	d.SetId(newMappedService.ID)
 
-	err = networkElementToResource(d, newMappedService)
+	err = mappedServiceToResource(d, newMappedService)
 	if err != nil {
 		return err
 	}
-	err = setTags(d, client)
+	err = client.SetNetworkElementTags(d)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return resourceMappedServiceRead(d, m)
 }
 
 func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Client)
 
-	client := m.(*metanetworks.Client)
+	networkElement, err := client.GetNetworkElement(d.Id())
+	if err != nil {
+		d.SetId("")
+		return nil
+	}
 
-	var newNetworkElement *metanetworks.NetworkElement
-	newNetworkElement, err := client.GetNetworkElement(d.Id())
-	if err != nil {
-		return err
-	}
-	err = networkElementToResource(d, newNetworkElement)
-	if err != nil {
-		return err
-	}
-	err = getTags(d, client)
+	err = mappedServiceToResource(d, networkElement)
 	if err != nil {
 		return err
 	}
@@ -136,39 +122,37 @@ func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceMappedServiceUpdate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	mappedService := d.Get("mapped_service").(string)
 
-	networkElement := metanetworks.NetworkElement{
+	networkElement := NetworkElement{
 		Name:          name,
 		Description:   description,
 		MappedService: mappedService,
 	}
-	var updatedMappedService *metanetworks.NetworkElement
+	var updatedMappedService *NetworkElement
 	updatedMappedService, err := client.UpdateNetworkElement(d.Id(), &networkElement)
 	if err != nil {
 		return err
 	}
 
-	err = networkElementToResource(d, updatedMappedService)
+	err = mappedServiceToResource(d, updatedMappedService)
 	if err != nil {
 		return err
 	}
-	err = setTags(d, client)
+	err = client.SetNetworkElementTags(d)
 	if err != nil {
 		return err
 	}
 
-	return nil
-
+	return resourceMappedServiceRead(d, m)
 }
 
 func resourceMappedServiceDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	err := client.DeleteNetworkElement(d.Id())
 	if err != nil {
@@ -178,52 +162,18 @@ func resourceMappedServiceDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func networkElementToResource(d *schema.ResourceData, m *metanetworks.NetworkElement) error {
-
+func mappedServiceToResource(d *schema.ResourceData, m *NetworkElement) error {
 	d.Set("name", m.Name)
 	d.Set("description", m.Description)
 	d.Set("mapped_service", m.MappedService)
 	d.Set("aliases", m.Aliases)
-
 	d.Set("created_at", m.CreatedAt)
 	d.Set("dns_name", m.DNSName)
 	d.Set("expires_at", m.ExpiresAt)
 	d.Set("modified_at", m.ModifiedAt)
-	d.Set("org_id", m.OrgId)
+	d.Set("org_id", m.OrgID)
 
-	d.SetId(m.Id)
-
-	return nil
-}
-
-func setTags(d *schema.ResourceData, client *metanetworks.Client) error {
-	if d.HasChange("tags") {
-		tagMapInterface := d.Get("tags").(map[string]interface{})
-		tagMapString := make(map[string]string)
-		for key, value := range tagMapInterface {
-			tagMapString[key] = value.(string)
-		}
-
-		id := d.Id()
-		err := client.SetNetworkElementTags(id, tagMapString)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func getTags(d *schema.ResourceData, client *metanetworks.Client) error {
-
-	id := d.Id()
-
-	tagsMap, err := client.GetNetworkElementTags(id)
-	if err != nil {
-		return err
-	}
-
-	d.Set("tags", tagsMap)
+	d.SetId(m.ID)
 
 	return nil
 }

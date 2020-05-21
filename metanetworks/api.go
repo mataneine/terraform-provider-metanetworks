@@ -1,14 +1,58 @@
 package metanetworks
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"reflect"
+	"time"
 )
 
-func (c *Client) Create(endpoint string, o interface{}) (interface{}, error) {
+// Request ...
+func (c *Client) Request(endpoint, method string, data []byte, contentType string) ([]byte, error) {
+	if contentType == "" {
+		contentType = "application/json"
+	}
+	// Do we need to refresh the token? Do this first because the token might be expired, but the refresh token is ok.
+	now := time.Now()
+	if ((c.TokenRefreshed + c.OAUTHToken.Expiry) - now.Unix()) < 30 {
+		err := c.RefreshToken()
+		if err != nil {
+			return nil, err
+		}
+	}
 
+	req, err := http.NewRequest(method, baseURL+endpoint, bytes.NewReader(data))
+
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", contentType)
+	req.Header.Add("Authorization", "Bearer "+c.OAUTHToken.Token)
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		return nil, errors.New(string(body))
+	}
+
+	log.Printf("Response: %s", body)
+	return body, nil
+}
+
+// Create ...
+func (c *Client) Create(endpoint string, o interface{}) (interface{}, error) {
 	v := reflect.ValueOf(o)
 	t := reflect.TypeOf(o)
 	if t.Kind() != reflect.Struct {
@@ -39,21 +83,21 @@ func (c *Client) Create(endpoint string, o interface{}) (interface{}, error) {
 		}
 	}
 
-	json_data, err := json.Marshal(requestObject.Interface())
+	data, err := json.Marshal(requestObject.Interface())
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.CreateRequest(endpoint, json_data)
+	resp, err := c.Request(endpoint, "POST", data, "application/json")
 	if err != nil {
 		return nil, err
 	}
 
 	responseObject := reflect.New(t).Interface()
 	err = json.Unmarshal(resp, &responseObject)
-	id := reflect.Indirect(reflect.ValueOf(responseObject)).FieldByName("Id")
+	id := reflect.Indirect(reflect.ValueOf(responseObject)).FieldByName("ID")
 
-	log.Printf("Created Object with Id " + id.String())
+	log.Printf("Created Object with ID " + id.String())
 	// we need to update at a different endpoint, luckily these follow a pattern of sticking the id on the end.
 	if needsUpdate {
 		responseObject, err = c.Update(endpoint+"/"+id.String(), o)
@@ -66,8 +110,9 @@ func (c *Client) Create(endpoint string, o interface{}) (interface{}, error) {
 	return responseObject, nil
 }
 
+// Read ...
 func (c *Client) Read(endpoint string, o interface{}) error {
-	resp, err := c.ReadRequest(endpoint)
+	resp, err := c.Request(endpoint, "GET", nil, "application/json")
 	if err != nil {
 		return err
 	}
@@ -80,8 +125,8 @@ func (c *Client) Read(endpoint string, o interface{}) error {
 	return nil
 }
 
+// Update ...
 func (c *Client) Update(endpoint string, o interface{}) (interface{}, error) {
-
 	v := reflect.ValueOf(o)
 	t := reflect.TypeOf(o)
 	if t.Kind() != reflect.Struct {
@@ -113,12 +158,12 @@ func (c *Client) Update(endpoint string, o interface{}) (interface{}, error) {
 		}
 	}
 
-	json_data, err := json.Marshal(requestObject.Interface())
+	data, err := json.Marshal(requestObject.Interface())
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.UpdateRequest(endpoint, json_data)
+	resp, err := c.Request(endpoint, "PATCH", data, "application/merge-patch+json")
 	if err != nil {
 		return nil, err
 	}
@@ -127,4 +172,13 @@ func (c *Client) Update(endpoint string, o interface{}) (interface{}, error) {
 	err = json.Unmarshal(resp, &responseObject)
 
 	return responseObject, nil
+}
+
+// Delete ...
+func (c *Client) Delete(endpoint string) error {
+	_, err := c.Request(endpoint, "DELETE", nil, "application/json")
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -1,93 +1,71 @@
 package metanetworks
 
-import "encoding/json"
+import (
+	"errors"
+	"log"
+	"reflect"
+)
 
 const (
-	ProtocolGroupEndpoint string = "/v1/protocol_groups"
+	protocolGroupsEndpoint string = "/v1/protocol_groups"
 )
 
 type ProtocolGroup struct {
-	Description string     `json:"description,omitempty"`
+	Description string     `json:"description"`
 	Name        string     `json:"name"`
 	Protocols   []Protocol `json:"protocols,omitempty"`
 	CreatedAt   string     `json:"created_at,omitempty"`
-	Id          string     `json:"id,omitempty"`
+	ID          string     `json:"id,omitempty"`
 	ModifiedAt  string     `json:"modified_at,omitempty"`
-	OrgId       string     `json:"org_id,omitempty"`
+	OrgID       string     `json:"org_id,omitempty"`
 	ReadOnly    bool       `json:"read_only,omitempty"`
 }
 
 type Protocol struct {
-	Port     uint16 `json:"port"`
-	Protocol string `json:"protocol"`
+	Port     int64  `json:"port" type:"integer"`
+	Protocol string `json:"proto"`
 }
 
-func (c *Client) GetProtocolGroup(protocol_group_id string) (*ProtocolGroup, error) {
-
-	resp, err := c.MakeRequest(ProtocolGroupEndpoint+"/"+protocol_group_id, "GET", nil, "")
+func (c *Client) GetProtocolGroup(protocolGroupID string) (*ProtocolGroup, error) {
+	var protocolGroup ProtocolGroup
+	err := c.Read(protocolGroupsEndpoint+"/"+protocolGroupID, &protocolGroup)
 	if err != nil {
 		return nil, err
 	}
 
-	var protocol_group ProtocolGroup
-	err = json.Unmarshal(resp, &protocol_group)
-	if err != nil {
-		return nil, err
-	}
-
-	return &protocol_group, nil
+	log.Printf("Returning ProtocolGroup from Get: %s", protocolGroup)
+	return &protocolGroup, nil
 }
 
-func (c *Client) UpdateProtocolGroup(protocol_group_id string, protocol_group *ProtocolGroup) (*ProtocolGroup, error) {
-
-	// can't change these so the api throws an error when you try and patch them
-	protocol_group.Id = ""
-	protocol_group.CreatedAt = ""
-	protocol_group.OrgId = ""
-	protocol_group.ModifiedAt = ""
-
-	json_data, err := json.Marshal(protocol_group)
+func (c *Client) UpdateProtocolGroup(protocolGroupID string, protocolGroup *ProtocolGroup) (*ProtocolGroup, error) {
+	resp, err := c.Update(protocolGroupsEndpoint+"/"+protocolGroupID, *protocolGroup)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.MakeRequest(ProtocolGroupEndpoint+"/"+protocol_group_id, "PATCH", json_data, "application/merge-patch+json")
-	if err != nil {
-		return nil, err
-	}
+	updatedProtocolGroup, _ := resp.(*ProtocolGroup)
 
-	var updated_protocol_group ProtocolGroup
-	err = json.Unmarshal(resp, &updated_protocol_group)
-	if err != nil {
-		return nil, err
-	}
-
-	return &updated_protocol_group, nil
-
+	log.Printf("Returning ProtocolGroup from Update: %s", updatedProtocolGroup.ID)
+	return updatedProtocolGroup, nil
 }
 
-func (c *Client) CreateProtocolGroup(protocol_group *ProtocolGroup) (*ProtocolGroup, error) {
-
-	json_data, err := json.Marshal(protocol_group)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := c.MakeRequest(ProtocolGroupEndpoint, "POST", json_data, "application/json")
+func (c *Client) CreateProtocolGroup(protocolGroup *ProtocolGroup) (*ProtocolGroup, error) {
+	resp, err := c.Create(protocolGroupsEndpoint, *protocolGroup)
 	if err != nil {
 		return nil, err
 	}
 
-	var created_protocol_group ProtocolGroup
-	err = json.Unmarshal(resp, &created_protocol_group)
-	if err != nil {
-		return nil, err
+	createdProtocolGroup, ok := resp.(*ProtocolGroup)
+	if !ok {
+		log.Printf("Returned Type is " + reflect.TypeOf(resp).Kind().String())
+		return nil, errors.New("Object returned from API was not a ProtocolGroup Pointer")
 	}
 
-	return &created_protocol_group, nil
-
+	log.Printf("Returning ProtocolGroup from Create: %s", createdProtocolGroup.ID)
+	return createdProtocolGroup, nil
 }
 
-func (c *Client) DeleteProtocolGroup(protocol_group_id string) error {
-	_, err := c.MakeRequest(ProtocolGroupEndpoint+"/"+protocol_group_id, "DELETE", nil, "")
+func (c *Client) DeleteProtocolGroup(protocolGroupID string) error {
+	err := c.Delete(protocolGroupsEndpoint + "/" + protocolGroupID)
 	if err != nil {
 		return err
 	}
