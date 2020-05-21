@@ -1,9 +1,7 @@
-package main
+package metanetworks
 
 import (
-	"crypto/md5"
 	"errors"
-	"terraform-provider-metanetworks/metanetworks"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
@@ -12,16 +10,14 @@ func resourceMappedServiceAlias() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"mapped_service_id": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The ID of the Mapped Service",
-				Required:    true,
-				ForceNew:    true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
 			},
 			"alias": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The alias to add",
-				Required:    true,
-				ForceNew:    true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
 			},
 		},
 		Create: resourceMappedServiceAliasCreate,
@@ -31,11 +27,12 @@ func resourceMappedServiceAlias() *schema.Resource {
 }
 
 func resourceMappedServiceAliasCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	mappedServiceID := d.Get("mapped_service_id").(string)
 	alias := d.Get("alias").(string)
-	var networkElement *metanetworks.NetworkElement
+
+	var networkElement *NetworkElement
 	networkElement, err := client.GetNetworkElement(mappedServiceID)
 	if err != nil {
 		return err
@@ -47,19 +44,14 @@ func resourceMappedServiceAliasCreate(d *schema.ResourceData, m interface{}) err
 		}
 	}
 
-	_, err = client.AddNetworkElementAlias(mappedServiceID, alias)
+	_, err = client.SetNetworkElementAlias(mappedServiceID, alias)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(makeID(mappedServiceID + alias))
+	d.SetId(mappedServiceID + alias)
 
-	return nil
-}
-
-func makeID(x string) string {
-	h := md5.Sum([]byte(x))
-	return string(h[:])
+	return resourceMappedServiceAliasRead(d, m)
 }
 
 func resourceMappedServiceAliasRead(d *schema.ResourceData, m interface{}) error {
@@ -67,11 +59,11 @@ func resourceMappedServiceAliasRead(d *schema.ResourceData, m interface{}) error
 }
 
 func resourceMappedServiceAliasDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	mappedServiceID := d.Get("mapped_service_id").(string)
 	alias := d.Get("alias").(string)
-	var networkElement *metanetworks.NetworkElement
+	var networkElement *NetworkElement
 	networkElement, err := client.GetNetworkElement(mappedServiceID)
 	if err != nil {
 		return err
@@ -79,7 +71,7 @@ func resourceMappedServiceAliasDelete(d *schema.ResourceData, m interface{}) err
 
 	for i := 0; i < len(networkElement.Aliases); i++ {
 		if networkElement.Aliases[i] == alias {
-			_, err = client.RemoveNetworkElementAlias(mappedServiceID, alias)
+			_, err = client.DeleteNetworkElementAlias(mappedServiceID, alias)
 			if err != nil {
 				return err
 			}

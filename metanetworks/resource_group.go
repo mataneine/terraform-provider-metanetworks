@@ -1,8 +1,6 @@
-package main
+package metanetworks
 
 import (
-	"terraform-provider-metanetworks/metanetworks"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -10,25 +8,20 @@ func resourceGroup() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"description": &schema.Schema{
-				Type:        schema.TypeString,
-				Default:     "",
-				Description: "Brief description for identification purposes",
-				Optional:    true,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The name of the Service.",
-				Required:    true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"expression": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The expression if this is a smart group",
-				Optional:    true,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"provisioned_by": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The name of the Service.",
-				Computed:    true,
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"created_at": &schema.Schema{
 				Type:     schema.TypeString,
@@ -43,22 +36,19 @@ func resourceGroup() *schema.Resource {
 				Computed: true,
 			},
 			"members": &schema.Schema{
-				Type:        schema.TypeSet,
-				Description: "Members of the group. This list is generated from the expression",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Computed:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Computed: true,
 			},
 			"roles": &schema.Schema{
-				Type:        schema.TypeSet,
-				Description: "Roles (permissions) to attach to the group",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 			"users": &schema.Schema{
-				Type:        schema.TypeSet,
-				Description: "Users to add to the group",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 		},
 		Create: resourceGroupCreate,
@@ -72,27 +62,26 @@ func resourceGroup() *schema.Resource {
 }
 
 func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	expression := d.Get("expression").(string)
 
-	group := metanetworks.Group{
+	group := Group{
 		Name:        name,
 		Description: description,
 		Expression:  expression,
 	}
 
-	var newGroup *metanetworks.Group
+	var newGroup *Group
 	newGroup, err := client.CreateGroup(&group)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newGroup.Id)
-	err = GroupToResource(d, newGroup)
+	d.SetId(newGroup.ID)
+	err = groupToResource(d, newGroup)
 	if err != nil {
 		return err
 	}
@@ -107,19 +96,19 @@ func resourceGroupCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return nil
+	return resourceGroupRead(d, m)
 }
 
 func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Client)
 
-	client := m.(*metanetworks.Client)
-
-	var newGroup *metanetworks.Group
-	newGroup, err := client.GetGroup(d.Id())
+	group, err := client.GetGroup(d.Id())
 	if err != nil {
-		return err
+		d.SetId("")
+		return nil
 	}
-	err = GroupToResource(d, newGroup)
+
+	err = groupToResource(d, group)
 	if err != nil {
 		return err
 	}
@@ -128,28 +117,27 @@ func resourceGroupRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	expression := d.Get("expression").(string)
 
-	group := metanetworks.Group{
+	group := Group{
 		Name:        name,
 		Description: description,
 		Expression:  expression,
 	}
 
-	var updatedGroup *metanetworks.Group
+	var updatedGroup *Group
 	updatedGroup, err := client.UpdateGroup(d.Id(), &group)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(updatedGroup.Id)
+	d.SetId(updatedGroup.ID)
 
-	err = GroupToResource(d, updatedGroup)
+	err = groupToResource(d, updatedGroup)
 	if err != nil {
 		return err
 	}
@@ -164,12 +152,11 @@ func resourceGroupUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return nil
-
+	return resourceGroupRead(d, m)
 }
 
 func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	err := client.DeleteGroup(d.Id())
 	if err != nil {
@@ -179,27 +166,7 @@ func resourceGroupDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-// GroupToResource ...
-func GroupToResource(d *schema.ResourceData, m *metanetworks.Group) error {
-
-	d.Set("description", m.Description)
-	d.Set("name", m.Name)
-
-	d.Set("destinations", m.Description)
-	d.Set("enabled", m.Description)
-	d.Set("protocol_groups", m.Description)
-	d.Set("sources", m.Description)
-
-	d.Set("created_at", m.CreatedAt)
-	d.Set("modified_at", m.ModifiedAt)
-	d.Set("org_id", m.OrgId)
-
-	d.SetId(m.Id)
-
-	return nil
-}
-
-func setGroupRoles(d *schema.ResourceData, client *metanetworks.Client) error {
+func setGroupRoles(d *schema.ResourceData, client *Client) error {
 	if d.HasChange("roles") {
 		roles := resourceTypeSetToStringSlice(d.Get("roles").(*schema.Set))
 		group, err := client.SetGroupRoles(d.Id(), roles)
@@ -207,13 +174,13 @@ func setGroupRoles(d *schema.ResourceData, client *metanetworks.Client) error {
 			return err
 		}
 
-		GroupToResource(d, group)
+		groupToResource(d, group)
 	}
 
 	return nil
 }
 
-func setGroupUsers(d *schema.ResourceData, client *metanetworks.Client) error {
+func setGroupUsers(d *schema.ResourceData, client *Client) error {
 	if d.HasChange("users") {
 		old, new := d.GetChange("users")
 		toAddSet := new.(*schema.Set).Difference(old.(*schema.Set))
@@ -222,7 +189,7 @@ func setGroupUsers(d *schema.ResourceData, client *metanetworks.Client) error {
 		toAdd := resourceTypeSetToStringSlice(toAddSet)
 		toRemove := resourceTypeSetToStringSlice(toRemoveSet)
 
-		var group *metanetworks.Group
+		var group *Group
 		var err error
 		if len(toAdd) > 0 {
 			group, err = client.AddGroupUsers(d.Id(), toAdd)
@@ -237,7 +204,7 @@ func setGroupUsers(d *schema.ResourceData, client *metanetworks.Client) error {
 			}
 		}
 
-		GroupToResource(d, group)
+		groupToResource(d, group)
 	}
 
 	return nil

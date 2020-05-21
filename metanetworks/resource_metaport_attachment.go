@@ -1,44 +1,40 @@
-package main
+package metanetworks
 
 import (
 	"errors"
-	"terraform-provider-metanetworks/metanetworks"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-func resourceMetaportElementAttach() *schema.Resource {
+func resourceMetaportAttachment() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"metaport_id": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The ID of the MetaPort",
-				Required:    true,
-				ForceNew:    true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
 			},
 			"network_element_id": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The ID of the Network Element (Mapped Service etc)",
-				Required:    true,
-				ForceNew:    true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
 			},
 		},
-		Create: resourceMetaportElementAttachCreate,
-		Read:   resourceMetaportElementAttachRead,
-		Delete: resourceMetaportElementAttachDelete,
+		Create: resourceMetaportAttachmentCreate,
+		Read:   resourceMetaportAttachmentRead,
+		Delete: resourceMetaportAttachmentDelete,
 	}
 }
 
-func resourceMetaportElementAttachCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+func resourceMetaportAttachmentCreate(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Client)
 
 	elementID := d.Get("network_element_id").(string)
+
 	metaportID := d.Get("metaport_id").(string)
+	metanetworksMutexKV.Lock(d.Id())
+	defer metanetworksMutexKV.Unlock(d.Id())
 
-	mutex := metaportGetLock(d.Id())
-	defer mutex.Unlock()
-
-	var metaport *metanetworks.MetaPort
+	var metaport *MetaPort
 	metaport, err := client.GetMetaPort(metaportID)
 	if err != nil {
 		return err
@@ -57,21 +53,21 @@ func resourceMetaportElementAttachCreate(d *schema.ResourceData, m interface{}) 
 		return err
 	}
 
-	d.SetId(elementID + metaportID)
+	d.SetId(metaportID + elementID)
 
-	return nil
+	return resourceMetaportAttachmentRead(d, m)
 }
 
-func resourceMetaportElementAttachRead(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+func resourceMetaportAttachmentRead(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Client)
 
 	elementID := d.Get("network_element_id").(string)
 	metaportID := d.Get("metaport_id").(string)
 
-	mutex := metaportGetLock(d.Id())
-	defer mutex.Unlock()
+	metanetworksMutexKV.Lock(d.Id())
+	defer metanetworksMutexKV.Unlock(d.Id())
 
-	var metaport *metanetworks.MetaPort
+	var metaport *MetaPort
 	metaport, err := client.GetMetaPort(metaportID)
 	if err != nil {
 		return err
@@ -86,8 +82,7 @@ func resourceMetaportElementAttachRead(d *schema.ResourceData, m interface{}) er
 
 	}
 
-	// If not present we need to
-	// destroy the terraform resource so that it is recreated.
+	// If not present we need to destroy the terraform resource so that it is recreated.
 	if !found {
 		d.SetId("")
 	}
@@ -95,16 +90,16 @@ func resourceMetaportElementAttachRead(d *schema.ResourceData, m interface{}) er
 	return nil
 }
 
-func resourceMetaportElementAttachDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+func resourceMetaportAttachmentDelete(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Client)
 
 	elementID := d.Get("network_element_id").(string)
 	metaportID := d.Get("metaport_id").(string)
 
-	mutex := metaportGetLock(d.Id())
-	defer mutex.Unlock()
+	metanetworksMutexKV.Lock(d.Id())
+	defer metanetworksMutexKV.Unlock(d.Id())
 
-	var metaport *metanetworks.MetaPort
+	var metaport *MetaPort
 	metaport, err := client.GetMetaPort(metaportID)
 	if err != nil {
 		return err

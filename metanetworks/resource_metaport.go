@@ -1,59 +1,34 @@
-package main
+package metanetworks
 
 import (
-	"sync"
-	"terraform-provider-metanetworks/metanetworks"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
-
-// Force operations on the same metaport to happen sequentially
-// to prevent race conditions
-var resourceMetaPortMutex = map[string]*sync.Mutex{}
-
-func metaportGetLock(id string) *sync.Mutex {
-
-	_, ok := resourceMetaPortMutex[id]
-	if !ok {
-		resourceMetaPortMutex[id] = &sync.Mutex{}
-	}
-
-	resourceMetaPortMutex[id].Lock()
-
-	return resourceMetaPortMutex[id]
-}
 
 func resourceMetaport() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The name of the MetaPort.",
-				Required:    true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"description": &schema.Schema{
-				Type:        schema.TypeString,
-				Default:     "",
-				Description: "Brief description for identification purposes",
-				Optional:    true,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"enabled": &schema.Schema{
-				Type:        schema.TypeBool,
-				Default:     true,
-				Description: "On/Off toggle to allow traffic to pass through this MetaPort",
-				Optional:    true,
+				Type:     schema.TypeBool,
+				Default:  true,
+				Optional: true,
 			},
 			"mapped_elements": &schema.Schema{
-				Type:        schema.TypeSet,
-				Computed:    true,
-				Description: "The list of IDs for mapped elements that should be accessed through this MetaPort.",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Computed: true,
 			},
 			"allow_support": &schema.Schema{
-				Type:        schema.TypeBool,
-				Default:     true,
-				Description: "Allow metanetworks to remotely access this MetaPort for support purposes.",
-				Optional:    true,
+				Type:     schema.TypeBool,
+				Default:  true,
+				Optional: true,
 			},
 			"created_at": &schema.Schema{
 				Type:     schema.TypeString,
@@ -91,8 +66,7 @@ func resourceMetaport() *schema.Resource {
 }
 
 func resourceMetaportCreate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
@@ -100,41 +74,37 @@ func resourceMetaportCreate(d *schema.ResourceData, m interface{}) error {
 	enabled := d.Get("enabled").(bool)
 	allowSupport := d.Get("allow_support").(bool)
 
-	metaport := metanetworks.MetaPort{
+	metaport := MetaPort{
 		Name:           name,
 		Description:    description,
 		MappedElements: mappedElements,
 		Enabled:        enabled,
 		AllowSupport:   allowSupport,
 	}
-	var newMetaport *metanetworks.MetaPort
+	var newMetaport *MetaPort
 	newMetaport, err := client.CreateMetaPort(&metaport)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newMetaport.Id)
+	d.SetId(newMetaport.ID)
 	err = metaportToResource(d, newMetaport)
 	if err != nil {
 		return err
 	}
-	return nil
+	return resourceMetaportRead(d, m)
 }
 
 func resourceMetaportRead(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Client)
 
-	client := m.(*metanetworks.Client)
-
-	var newMetaport *metanetworks.MetaPort
-
-	mutex := metaportGetLock(d.Id())
-	defer mutex.Unlock()
-
-	newMetaport, err := client.GetMetaPort(d.Id())
+	metaport, err := client.GetMetaPort(d.Id())
 	if err != nil {
-		return err
+		d.SetId("")
+		return nil
 	}
-	err = metaportToResource(d, newMetaport)
+
+	err = metaportToResource(d, metaport)
 	if err != nil {
 		return err
 	}
@@ -143,8 +113,7 @@ func resourceMetaportRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
@@ -157,7 +126,7 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 	enabled := d.Get("enabled").(bool)
 	allowSupport := d.Get("allow_support").(bool)
 
-	metaport := metanetworks.MetaPort{
+	metaport := MetaPort{
 		Name:           name,
 		Description:    description,
 		Enabled:        enabled,
@@ -165,10 +134,7 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 		AllowSupport:   allowSupport,
 	}
 
-	mutex := metaportGetLock(d.Id())
-	defer mutex.Unlock()
-
-	var updatedMetaport *metanetworks.MetaPort
+	var updatedMetaport *MetaPort
 	updatedMetaport, err := client.UpdateMetaPort(d.Id(), &metaport)
 	if err != nil {
 		return err
@@ -178,15 +144,11 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return nil
-
+	return resourceMetaportRead(d, m)
 }
 
 func resourceMetaportDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
-
-	mutex := metaportGetLock(d.Id())
-	defer mutex.Unlock()
+	client := m.(*Client)
 
 	err := client.DeleteMetaPort(d.Id())
 	if err != nil {
@@ -196,57 +158,63 @@ func resourceMetaportDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func metaportToResource(d *schema.ResourceData, m *metanetworks.MetaPort) error {
-
+func metaportToResource(d *schema.ResourceData, m *MetaPort) error {
 	err := d.Set("name", m.Name)
 	if err != nil {
 		return err
 	}
+
 	err = d.Set("description", m.Description)
 	if err != nil {
 		return err
 	}
+
 	err = d.Set("enabled", m.Enabled)
 	if err != nil {
 		return err
 	}
+
 	err = d.Set("mapped_elements", m.MappedElements)
 	if err != nil {
 		return err
 	}
 
-	//d.Set("connection", m.Connection)
-
 	err = d.Set("allow_support", m.AllowSupport)
 	if err != nil {
 		return err
 	}
+
 	err = d.Set("created_at", m.CreatedAt)
 	if err != nil {
 		return err
 	}
+
 	err = d.Set("dns_name", m.DNSName)
 	if err != nil {
 		return err
 	}
+
 	err = d.Set("expires_at", m.ExpiresAt)
 	if err != nil {
 		return err
 	}
+
 	err = d.Set("modified_at", m.ModifiedAt)
 	if err != nil {
 		return err
 	}
-	err = d.Set("network_element_id", m.NetworkElementId)
-	if err != nil {
-		return err
-	}
-	err = d.Set("org_id", m.OrgId)
+
+	err = d.Set("network_element_id", m.NetworkElementID)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(m.Id)
+	err = d.Set("org_id", m.OrgID)
+	if err != nil {
+		return err
+	}
+
+	d.SetId(m.ID)
 
 	return nil
 }

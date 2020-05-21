@@ -1,8 +1,6 @@
-package main
+package metanetworks
 
 import (
-	"terraform-provider-metanetworks/metanetworks"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -10,23 +8,20 @@ func resourceMetaportOTAC() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"metaport_id": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The ID of the MetaPort",
-				Required:    true,
-				ForceNew:    true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
 			},
 			"triggers": &schema.Schema{
-				Type:        schema.TypeSet,
-				Required:    true,
-				Description: "The list of IDs for mapped elements that should be accessed through this MetaPort.",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				ForceNew:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Required: true,
+				ForceNew: true,
 			},
 			"secret": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "Brief description for identification purposes",
-				Computed:    true,
-				Sensitive:   true,
+				Type:      schema.TypeString,
+				Computed:  true,
+				Sensitive: true,
 			},
 		},
 		Create: resourceMetaportOTACCreate,
@@ -34,8 +29,9 @@ func resourceMetaportOTAC() *schema.Resource {
 		Delete: resourceMetaportOTACDelete,
 	}
 }
+
 func resourceMetaportOTACCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	metaportID := d.Get("metaport_id").(string)
 	otacSecret, err := client.GenerateMetaPortOTAC(metaportID)
@@ -46,7 +42,7 @@ func resourceMetaportOTACCreate(d *schema.ResourceData, m interface{}) error {
 	d.Set("secret", otacSecret)
 	d.SetId(otacSecret[0:5])
 
-	return nil
+	return resourceMetaportOTACRead(d, m)
 }
 
 func resourceMetaportOTACRead(d *schema.ResourceData, m interface{}) error {

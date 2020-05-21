@@ -1,11 +1,18 @@
 package metanetworks
 
+import (
+	"fmt"
+	"net/url"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+)
+
 const (
-	UserEndpoint string = "/v1/users"
+	usersEndpoint string = "/v1/users"
 )
 
 type User struct {
-	Description       string              `json:"description,omitempty"`
+	Description       string              `json:"description"`
 	Email             string              `json:"email"`
 	Enabled           bool                `json:"enabled"`
 	FamilyName        string              `json:"family_name"`
@@ -13,22 +20,60 @@ type User struct {
 	Phone             string              `json:"phone,omitempty"`
 	ProvisionedBy     string              `json:"provisioned_by,omitempty"`
 	CreatedAt         string              `json:"created_at,omitempty" meta_api:"read_only"`
-	Id                string              `json:"id,omitempty" meta_api:"read_only"`
+	ID                string              `json:"id,omitempty" meta_api:"read_only"`
 	Inventory         []string            `json:"inventory,omitempty" meta_api:"read_only"`
 	MFAEnabled        bool                `json:"mfa_enabled,omitempty" meta_api:"read_only"`
 	ModifiedAt        string              `json:"modified_at,omitempty" meta_api:"read_only"`
 	Name              string              `json:"name,omitempty"`
-	OrgId             string              `json:"org_id,omitempty" meta_api:"read_only"`
+	OrgID             string              `json:"org_id,omitempty" meta_api:"read_only"`
 	OverlayMFAEnabled bool                `json:"overlay_mfa_enabled,omitempty"`
 	PhoneVerified     bool                `json:"phone_verified,omitempty"`
 	Roles             []string            `json:"roles,omitempty" meta_api:"read_only"`
 	Tags              []map[string]string `json:"tags,omitempty" meta_api:"read_only"`
 }
 
-func (c *Client) GetUser(user_id string) (*User, error) {
+// userToResource ...
+func userToResource(d *schema.ResourceData, m *User) error {
+	d.Set("description", m.Description)
+	d.Set("email", m.Email)
+	d.Set("enabled", m.Description)
+	d.Set("family_name", m.FamilyName)
+	d.Set("given_name", m.GivenName)
+	d.Set("phone", m.Phone)
+	d.Set("provisioned_by", m.ProvisionedBy)
+	d.Set("created_at", m.CreatedAt)
+	d.Set("inventory", m.Inventory)
+	d.Set("mfa_enabled", m.MFAEnabled)
+	d.Set("modified_at", m.ModifiedAt)
+	d.Set("name", m.Name)
+	d.Set("org_id", m.OrgID)
+	d.Set("overlay_mfa_enabled", m.OverlayMFAEnabled)
+	d.Set("phone_verified", m.PhoneVerified)
+	d.Set("roles", m.Roles)
+	d.Set("tags", m.Tags)
 
+	d.SetId(m.ID)
+
+	return nil
+}
+
+func (c *Client) GetUsers(email string) ([]User, error) {
+	var users []User
+	err := c.Read(usersEndpoint+"?email="+url.QueryEscape(email), &users)
+	if err != nil {
+		return nil, err
+	}
+
+	if email != "" && len(users) == 0 {
+		return nil, fmt.Errorf("Not found: %s", email)
+	}
+
+	return users, nil
+}
+
+func (c *Client) GetUser(userID string) (*User, error) {
 	var user User
-	err := c.Read(UserEndpoint+"/"+user_id, &user)
+	err := c.Read(usersEndpoint+"/"+userID, &user)
 	if err != nil {
 		return nil, err
 	}
@@ -36,32 +81,28 @@ func (c *Client) GetUser(user_id string) (*User, error) {
 	return &user, nil
 }
 
-func (c *Client) UpdateUser(user_id string, user *User) (*User, error) {
-
-	resp, err := c.Update(UserEndpoint+"/"+user_id, *user)
+func (c *Client) UpdateUser(userID string, user *User) (*User, error) {
+	resp, err := c.Update(usersEndpoint+"/"+userID, *user)
 	if err != nil {
 		return nil, err
 	}
-	updated_user, _ := resp.(*User)
+	updatedUser, _ := resp.(*User)
 
-	return updated_user, nil
-
+	return updatedUser, nil
 }
 
 func (c *Client) CreateUser(user *User) (*User, error) {
-
-	resp, err := c.Create(UserEndpoint, *user)
+	resp, err := c.Create(usersEndpoint, *user)
 	if err != nil {
 		return nil, err
 	}
-	created_user, _ := resp.(*User)
+	createdUser, _ := resp.(*User)
 
-	return created_user, nil
-
+	return createdUser, nil
 }
 
-func (c *Client) DeleteUser(user_id string) error {
-	err := c.DeleteRequest(UserEndpoint + "/" + user_id)
+func (c *Client) DeleteUser(userID string) error {
+	err := c.Delete(usersEndpoint + "/" + userID)
 	if err != nil {
 		return err
 	}
@@ -69,19 +110,8 @@ func (c *Client) DeleteUser(user_id string) error {
 	return nil
 }
 
-func (c *Client) ListUsers() ([]User, error) {
-
-	var userList []User
-	err := c.Read(UserEndpoint, &userList)
-	if err != nil {
-		return nil, err
-	}
-
-	return userList, nil
-}
-
-func (c *Client) GetUserTags(user_id string) (map[string]string, error) {
-	tagMap, err := c.GetTags(UserEndpoint + "/" + user_id + "/tags")
+func (c *Client) GetUserTags(userID string) (map[string]string, error) {
+	tagMap, err := c.GetTags(usersEndpoint + "/" + userID + "/tags")
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +119,8 @@ func (c *Client) GetUserTags(user_id string) (map[string]string, error) {
 	return tagMap, nil
 }
 
-func (c *Client) SetUserTags(user_id string, tags map[string]string) error {
-	err := c.SetTags(UserEndpoint+"/"+user_id+"/tags", tags)
+func (c *Client) SetUserTags(userID string, tags map[string]string) error {
+	err := c.UpdateTags(usersEndpoint+"/"+userID+"/tags", tags)
 	if err != nil {
 		return err
 	}

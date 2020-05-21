@@ -1,9 +1,6 @@
-package main
+package metanetworks
 
 import (
-	"fmt"
-	"terraform-provider-metanetworks/metanetworks"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
@@ -11,39 +8,32 @@ func resourcePolicy() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"description": &schema.Schema{
-				Type:        schema.TypeString,
-				Default:     "",
-				Description: "Brief description for identification purposes",
-				Optional:    true,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"name": &schema.Schema{
-				Type:        schema.TypeString,
-				Description: "The name of the Service.",
-				Required:    true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"destinations": &schema.Schema{
-				Type:        schema.TypeSet,
-				Description: "List of Targets that the policy allows access to",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Required:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 			"enabled": &schema.Schema{
-				Type:        schema.TypeBool,
-				Default:     true,
-				Description: "On/Off toggle to allow traffic to pass through this MetaPort",
-				Optional:    true,
+				Type:     schema.TypeBool,
+				Default:  true,
+				Optional: true,
 			},
 			"protocol_groups": &schema.Schema{
-				Type:        schema.TypeSet,
-				Description: "List of Port/Protocols that the policy allows access to",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Required:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 			"sources": &schema.Schema{
-				Type:        schema.TypeSet,
-				Description: "List of Sources that the policy allows access from",
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Required:    true,
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
 			},
 			"created_at": &schema.Schema{
 				Type:     schema.TypeString,
@@ -68,21 +58,8 @@ func resourcePolicy() *schema.Resource {
 	}
 }
 
-func resourceTypeSetToStringSlice(s *schema.Set) []string {
-
-	valuesList := s.List()
-	values := make([]string, len(valuesList))
-	for i := 0; i < len(valuesList); i++ {
-		values[i] = fmt.Sprint(valuesList[i])
-	}
-
-	return values
-
-}
-
 func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
@@ -91,7 +68,7 @@ func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
 	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
 	protocolGroups := resourceTypeSetToStringSlice(d.Get("protocol_groups").(*schema.Set))
 
-	policy := metanetworks.Policy{
+	policy := Policy{
 		Name:           name,
 		Description:    description,
 		Enabled:        enabled,
@@ -100,32 +77,32 @@ func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
 		ProtocolGroups: protocolGroups,
 	}
 
-	var newPolicy *metanetworks.Policy
+	var newPolicy *Policy
 	newPolicy, err := client.CreatePolicy(&policy)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newPolicy.Id)
+	d.SetId(newPolicy.ID)
 
 	err = policyToResource(d, newPolicy)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return resourcePolicyRead(d, m)
 }
 
 func resourcePolicyRead(d *schema.ResourceData, m interface{}) error {
+	client := m.(*Client)
 
-	client := m.(*metanetworks.Client)
-
-	var newPolicy *metanetworks.Policy
-	newPolicy, err := client.GetPolicy(d.Id())
+	policy, err := client.GetPolicy(d.Id())
 	if err != nil {
-		return err
+		d.SetId("")
+		return nil
 	}
-	err = policyToResource(d, newPolicy)
+
+	err = policyToResource(d, policy)
 	if err != nil {
 		return err
 	}
@@ -134,8 +111,7 @@ func resourcePolicyRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourcePolicyUpdate(d *schema.ResourceData, m interface{}) error {
-
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
@@ -144,7 +120,7 @@ func resourcePolicyUpdate(d *schema.ResourceData, m interface{}) error {
 	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
 	protocolGroups := resourceTypeSetToStringSlice(d.Get("protocol_groups").(*schema.Set))
 
-	policy := metanetworks.Policy{
+	policy := Policy{
 		Name:           name,
 		Description:    description,
 		Enabled:        enabled,
@@ -153,25 +129,24 @@ func resourcePolicyUpdate(d *schema.ResourceData, m interface{}) error {
 		ProtocolGroups: protocolGroups,
 	}
 
-	var updatedPolicy *metanetworks.Policy
+	var updatedPolicy *Policy
 	updatedPolicy, err := client.UpdatePolicy(d.Id(), &policy)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(updatedPolicy.Id)
+	d.SetId(updatedPolicy.ID)
 
 	err = policyToResource(d, updatedPolicy)
 	if err != nil {
 		return err
 	}
 
-	return nil
-
+	return resourcePolicyRead(d, m)
 }
 
 func resourcePolicyDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*metanetworks.Client)
+	client := m.(*Client)
 
 	err := client.DeletePolicy(d.Id())
 	if err != nil {
@@ -181,21 +156,18 @@ func resourcePolicyDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func policyToResource(d *schema.ResourceData, m *metanetworks.Policy) error {
-
+func policyToResource(d *schema.ResourceData, m *Policy) error {
 	d.Set("description", m.Description)
 	d.Set("name", m.Name)
-
 	d.Set("destinations", m.Destinations)
 	d.Set("enabled", m.Enabled)
 	d.Set("protocol_groups", m.ProtocolGroups)
 	d.Set("sources", m.Sources)
-
 	d.Set("created_at", m.CreatedAt)
 	d.Set("modified_at", m.ModifiedAt)
-	d.Set("org_id", m.OrgId)
+	d.Set("org_id", m.OrgID)
 
-	d.SetId(m.Id)
+	d.SetId(m.ID)
 
 	return nil
 }

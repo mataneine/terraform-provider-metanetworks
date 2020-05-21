@@ -15,7 +15,6 @@ func die(message string) {
 }
 
 func main() {
-
 	csvFile, err := os.Open("users.csv")
 	if err != nil {
 		die(err.Error())
@@ -66,11 +65,10 @@ func main() {
 				die(err.Error())
 			}
 
-			err = client.SetUserTags(newUser.Id, tags)
+			err = client.SetUserTags(newUser.ID, tags)
 			if err != nil {
 				die(err.Error())
 			}
 		}
-
 	}
 }
