@@ -1,14 +1,14 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: users_data_source"
+page_title: "Metanetworks: metanetworks_user_data_source"
 sidebar_current: "docs-metanetwork-data-source"
 description: |-
   Get information about a user.
 ---
 
-# Data Source: user
+# Data Source: metanetworks_user
 
-This data source can be used to fetch information about a specific user. By using this data source, you can reference user properties without having to hard code IDs as input.
+Return a user of the organization
 
 ## Example Usage
 
@@ -18,10 +18,15 @@ data "metanetworks_user" "example" {
 }
 ```
 
+## Argument Reference
+
+The following arguments are supported:
+
+* `email` - (required) The user's email.
+
 ## Attributes Reference
 
 * `description` - 
-* `email` - 
 * `enabled` - 
 * `family_name` - 
 * `given_name` - 
