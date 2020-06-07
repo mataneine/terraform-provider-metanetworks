@@ -14,7 +14,7 @@ Modify a routing group of the organization.
 
 ```hcl
 resource "metanetworks_routing_group_attachment" "example" {
-  routing_group_id   = metanetworks_routing_group.organization.id
+  routing_group_id   = metanetworks_routing_group.organization.id ???? can be []? | fix below
   network_element_id = metanetworks_mapped_service.example.id
 }
 resource "metanetworks_routing_group" "organization" {
@@ -24,8 +24,14 @@ resource "metanetworks_routing_group" "organization" {
 output "organization" {
   value = metanetworks_routing_group.organization
 }
+data "metanetworks_user" "example_user" {
+  email = "example.user@example.com"
+}
+output "example_user" {
+  value = data.metanetworks_user.example_user
+}
 data "metanetworks_group" "example_group" {
-  name = "example-group"
+  name = "example group"
 }
 output "example_group" {
   value = data.metanetworks_group.example_group
