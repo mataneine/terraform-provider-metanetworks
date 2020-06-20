@@ -26,12 +26,12 @@ The following arguments are supported:
 
 ## Attributes Reference
 
-* `description` - 
-* `expression` - Allows grouping entities by their tags. Filtering by tag value is also supported if provided.
-* `provisioned_by` - 
-* `created_at` - 
-* `modified_at` - 
-* `org_id` - 
-* `members` - Returned when Expand=True is provided to call
-* `roles` - 
-* `users` - 
+* `description` - The Group Description.
+* `expression` - Smart Groups Expression.
+* `provisioned_by` - Name of the Identity Provider. ????
+* `created_at` - Creation Timestamp.
+* `modified_at` - Modification Timestamp.
+* `org_id` - The Organization ID. ????
+* `members` - The Group members.
+* `roles` - The Group Roles.
+* `users` - Users belonging to the group.

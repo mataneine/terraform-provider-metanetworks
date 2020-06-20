@@ -26,19 +26,19 @@ The following arguments are supported:
 
 ## Attributes Reference
 
-* `description` - 
-* `enabled` - 
-* `family_name` - 
-* `given_name` - 
-* `phone` - 
-* `provisioned_by` - 
-* `created_at` - 
-* `inventory` - List of elements owned by the user
-* `mfa_enabled` - State of the API MFA setting
-* `modified_at` - 
-* `name` - 
-* `org_id` - 
-* `overlay_mfa_enabled` - State of the Overlay MFA setting
-* `phone_verified` - 
-* `roles` - 
-* `tags` - 
+* `description` - The User Description.
+* `enabled` - User is enabled.
+* `family_name` - Last Name.
+* `given_name` - First Name.
+* `phone` - The User's phone number.
+* `provisioned_by` - Name of the Identity Provider. ????
+* `created_at` - Creation timestamp.
+* `inventory` - List of elements owned by the user.
+* `mfa_enabled` - State of the API MFA setting.
+* `modified_at` - Modification timestamp.
+* `name` - Name of the User entity. ????
+* `org_id` - ID of the Organization. ????
+* `overlay_mfa_enabled` - State of the Overlay MFA setting.
+* `phone_verified` - User verified via phone. ????
+* `roles` - Roles assigned to the user or inherited from Groups. ????
+* `tags` - List ???? of tags associated with the user.

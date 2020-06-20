@@ -3,12 +3,12 @@ layout: "metanetworks"
 page_title: "Metanetworks: metanetworks_metaport_attachment_resource"
 sidebar_current: "docs-metanetworks-resource"
 description: |-
-  metaports to add to the organization.
+  attach a network element to a metaport.
 ---
 
 # metanetworks_metaport_attachment_resource
 
-metaports to add to the organization.
+attach a network element to a metaport.
 
 ## Example Usage
 
@@ -37,5 +37,5 @@ output "example-metaport" {
 
 The following arguments are supported:
 
-* `metaport_id` - (required) the ID of the metaport.
-* `network_element_id` - (required)
+* `metaport_id` - (required) The ID of the metaport.
+* `network_element_id` - (required) The ID of the network element to attach to the Metaport.

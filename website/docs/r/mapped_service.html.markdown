@@ -22,21 +22,21 @@ resource "metanetworks_mapped_service" "example" {
 
 The following arguments are supported:
 
-* `name` - (required) The mapped_service name.
-* `mapped_service` - hostname-or-ipv4
-* `description` - 
+* `name` - (required) The Mapped Service Name.
+* `mapped_service` - Mapped Service IP or Hostname
+* `description` - Mapped Service Description
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `tags` - 
-* `created_at` - 
-* `dns_name` - 
-* `expires_at` - 
-* `modified_at` - 
-* `org_id` - 
-* `aliases` - 
-* `net_id` - 
-* `type` - 
-* `version` - 
+* `tags` - List ???? of tags associated with the Mapped Service.
+* `created_at` - Creation timestamp.
+* `dns_name` - New Domain Name
+* `expires_at` - Expiry timesptamp.
+* `modified_at` - Modification timestamp.
+* `org_id` - ID of the Organization. ????
+* `aliases` - Mapped Service IP or Hostname
+* `net_id` - ????
+* `type` - ["Device" | "Service" | "Mapped Service" | "Mapped Subnet"]
+* `version` - [???? couldn't find in api????]

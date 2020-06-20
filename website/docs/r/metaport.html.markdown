@@ -23,20 +23,19 @@ resource "metanetworks_metaport" "example-metaport" {
 
 The following arguments are supported:
 
-* `name` - (required)
-* `description` - 
-* `enabled` - (Not allowed for mapped service and mapped subnet)
-* `mapped_elements` - network element IDs
-* `allow_support` - 
+* `name` - (required) The MetaPort name.
+* `description` - The MetaPort description.
+* `enabled` - (Not allowed for mapped service and mapped subnet ????)
+* `mapped_elements` - Network element IDs to attach to the Metaport
+* `allow_support` ???? attribute - ????
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `created_at` - 
-* `dns_name` - 
-* `expires_at` - 
-* `modified_at` - 
-* `network_element_id` - 
-* `org_id` - 
-
+* `created_at` - Creation timestamp.
+* `dns_name` - ????
+* `expires_at` - Expiry timestamp.
+* `modified_at` - Modification timestamp.
+* `network_element_id` - The ID of the Metaport ????
+* `org_id` - The ID of the organization

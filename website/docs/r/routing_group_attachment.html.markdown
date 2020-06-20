@@ -3,12 +3,12 @@ layout: "metanetworks"
 page_title: "Metanetworks: metanetworks_routing_group_attachment_resource"
 sidebar_current: "docs-metanetworks-resource"
 description: |-
-  Modify a routing group of the organization.
+  Map a routing group to (a ????) Network Element.
 ---
 
 # metanetworks_routing_group_attachment
 
-Modify a routing group of the organization.
+Map a routing group to a Network Element.
 
 ## Example Usage
 
@@ -49,5 +49,5 @@ output "example" {
 
 The following arguments are supported:
 
-* `routing_group_id` - (required)
-* `network_element_id` - (required) IDs of groups and/or Users to attach to the routing group
+* `routing_group_id` - (required) The ID of the Routing Group.
+* `network_element_id` - (required) List ???? of IDs of groups and/or Users to attach to the routing group

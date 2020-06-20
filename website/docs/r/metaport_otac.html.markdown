@@ -29,11 +29,11 @@ output "example-metaport" {
 
 The following arguments are supported:
 
-* `metaport_id` - 
+* `metaport_id` - (required) The ID of the Metaport.
 * `triggers` - ????
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `secret` - 
+* `secret` - ????

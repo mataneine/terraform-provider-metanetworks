@@ -25,18 +25,18 @@ output "organization" {
 
 The following arguments are supported:
 
-* `name` - Required
-* `description` - 
-* `mapped_elements_ids` - (required)
-* `sources` - 
-exempt_sources???
+* `name` - (required) The name of the Routing Group.
+* `description` - The description of the Routing Group.
+* `mapped_elements_ids` - (required / attribute ????) List of Mapped Subnets and Services to attach to the Routing Group.
+* `sources` - (List of ????) sources to attach to the Routing Group (Devices, Groups, Native Services, users) (concat users & groups ????)
+no exempt_sources ????
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `created_at` - 
-* `modified_at` - 
-* `org_id` - 
-* `priority` -
+* `created_at` - Creation timestamp.
+* `modified_at` - Modification timestamp.
+* `org_id` - ID of the Orgabization
+* `priority` - ????
 id ???? - routing_group_id ????

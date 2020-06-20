@@ -69,17 +69,17 @@ output "example_group" {
 
 The following arguments are supported:
 
-* `description` - 
-* `name` - 
-* `destinations` - 
-* `enabled` - 
-* `protocol_groups` - 
-* `sources` - 
+* `description` - The Policy description.
+* `name` - The Policy name.
+* `destinations` - The Policy targets. (merge subnets & mapped services ????)
+* `enabled` - Is the Policy enabled.
+* `protocol_groups` - Protocols and Ports Restrictions
+* `sources` - (List of ????) The Policy sources.
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `created_at` - 
-* `modified_at` - 
-* `org_id` - 
+* `created_at` - Creation timestamp.
+* `modified_at` - Modification timestamp.
+* `org_id` - The Organization ID.

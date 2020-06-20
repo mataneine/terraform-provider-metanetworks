@@ -23,17 +23,17 @@ resource "metanetworks_group" "example" {
 The following arguments are supported:
 
 * `name` - (required) The group name.
-* `description` - 
+* `description` - The Group Description.
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `expression` - 
-* `provisioned_by` - 
-* `created_at` - 
-* `modified_at` - 
-* `org_id` - 
-* `members` - 
-* `roles` - 
-* `users` - 
+* `expression` - Smart Groups Expression.
+* `provisioned_by` - Name of the Identity Provider. ????
+* `created_at` - Creation timestamp.
+* `modified_at` - Modification timestamp.
+* `org_id` - The Organization ID. ????
+* `members` - The Group members.
+* `roles` - Group roles
+* `users` - Users belonging to the group.

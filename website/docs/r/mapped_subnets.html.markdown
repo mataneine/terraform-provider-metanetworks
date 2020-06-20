@@ -23,22 +23,22 @@ resource "metanetworks_mapped_subnets" "example" {
 
 The following arguments are supported:
 
-* `name` - (required) Subnet network element to add to the organization.
-* `mapped_subnets` - (required)
+* `name` - (required) Mapped Subnet Name.
+* `mapped_subnets` - (required) CIDRs to map for this service.
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `name` - 
-* `description` - 
-* `tags` - 
-* `mapped_domains` - 
-* `created_at` - 
-* `dns_name` - 
-* `expires_at` - 
-* `modified_at` - 
-* `org_id` - 
-* `net_id` - 
-* `type` - 
-* `version` - 
+* `platform` ???? - ???? not available in provider 
+* `description` - Mapped Subnet Description
+* `tags` - List ???? of tags associated with the subnet.
+* `mapped_domains` - List ???? of mapped domains
+* `created_at` - Creation timestamp.
+* `dns_name` - Hostname
+* `expires_at` - Expiry timestamp
+* `modified_at` - Modification timestamp.
+* `org_id` - ID of the Organization. ????
+* `net_id` - ID of the (subnet ????) network element. ????
+* `type` - ["Device" | "Service" | "Mapped Service" | "Mapped Subnet"]
+* `version` ???? (not in api) - 

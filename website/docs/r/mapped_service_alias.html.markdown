@@ -3,12 +3,12 @@ layout: "metanetworks"
 page_title: "Metanetworks: metanetworks_mapped_service_alias_resource"
 sidebar_current: "docs-metanetworks-resource"
 description: |-
-  Create a new mapped_service alias.
+  Create an Alias to a Mapped Service Network Element.
 ---
 
 # metanetworks_mapped_service_alias_resource
 
-Create a new mapped_service.
+Create an Alias to a Mapped Service Network Element
 
 ## Example Usage
 
@@ -30,5 +30,5 @@ output "example" {
 
 The following arguments are supported:
 
-* `mapped_service_id` - (required) the ID of the network element.
+* `mapped_service_id` - (required) the ID of the Mapped Service Network Element.
 * `alias` - (required) Alias name
