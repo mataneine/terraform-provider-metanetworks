@@ -2,10 +2,11 @@ package metanetworks
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/pkg/errors"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 const (

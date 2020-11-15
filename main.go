@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/plugin"
 	"terraform-provider-metanetworks/metanetworks"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
 
 func main() {
