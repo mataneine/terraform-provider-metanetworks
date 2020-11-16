@@ -16,7 +16,7 @@ func dataSourceUser() *schema.Resource {
 				Required: true,
 			},
 			"enabled": &schema.Schema{
-				Type:     schema.TypeBool,
+				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"family_name": &schema.Schema{
@@ -74,7 +74,7 @@ func dataSourceUser() *schema.Resource {
 				Computed: true,
 			},
 			"tags": &schema.Schema{
-				Type:     schema.TypeMap,
+				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
