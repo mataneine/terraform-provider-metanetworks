@@ -1,10 +1,7 @@
 package metanetworks
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -24,9 +21,13 @@ func resourceProtocolGroup() *schema.Resource {
 				Type: schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"port": &schema.Schema{
+						"from_port": &schema.Schema{
 							Type:     schema.TypeInt,
-							Optional: true,
+							Required: true,
+						},
+						"to_port": &schema.Schema{
+							Type:     schema.TypeInt,
+							Required: true,
 						},
 						"proto": &schema.Schema{
 							Type:     schema.TypeString,
@@ -49,7 +50,7 @@ func resourceProtocolGroup() *schema.Resource {
 				Computed: true,
 			},
 			"read_only": &schema.Schema{
-				Type:     schema.TypeString,
+				Type:     schema.TypeBool,
 				Computed: true,
 			},
 		},
@@ -75,7 +76,7 @@ func resourceProtocolGroupCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if v, ok := d.GetOk("protocols"); ok {
-		p, err := protocolsFromList(v.([]interface{}), name)
+		p, err := expandProtocols(v.([]interface{}), name)
 		if err != nil {
 			return err
 		}
@@ -128,7 +129,7 @@ func resourceProtocolGroupUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	if v, ok := d.GetOk("protocols"); ok {
-		p, err := protocolsFromList(v.([]interface{}), name)
+		p, err := expandProtocols(v.([]interface{}), name)
 		if err != nil {
 			return err
 		}
@@ -183,7 +184,8 @@ func flattenProtocols(in []Protocol) []map[string]interface{} {
 	var out = make([]map[string]interface{}, len(in), len(in))
 	for i, v := range in {
 		m := make(map[string]interface{})
-		m["port"] = v.Port
+		m["from_port"] = v.FromPort
+		m["to_port"] = v.ToPort
 		m["proto"] = v.Protocol
 		out[i] = m
 	}
@@ -191,59 +193,22 @@ func flattenProtocols(in []Protocol) []map[string]interface{} {
 	return out
 }
 
-func protocolsFromList(vs []interface{}, resourceID string) ([]Protocol, error) {
-	result := make([]Protocol, 0, len(vs))
-	for _, protocol := range vs {
-		attr, ok := protocol.(map[string]interface{})
+func expandProtocols(data []interface{}, resourceID string) ([]Protocol, error) {
+	protocols := make([]Protocol, 0, len(data))
+	for _, d := range data {
+		m, ok := d.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		t, err := protocolFromMap(attr, resourceID)
-		if err != nil {
-			return nil, err
+		protocol := &Protocol{
+			FromPort: int64(m["from_port"].(int)),
+			ToPort:   int64(m["to_port"].(int)),
+			Protocol: m["proto"].(string),
 		}
 
-		if t != nil {
-			result = append(result, *t)
-		}
+		protocols = append(protocols, *protocol)
 	}
 
-	return result, nil
-}
-
-func protocolFromMap(attr map[string]interface{}, resourceID string) (*Protocol, error) {
-
-	var p Protocol
-
-	b, _ := json.Marshal(attr)
-	json.Unmarshal(b, &p)
-
-	if _, ok := attr["port"]; !ok {
-		return nil, fmt.Errorf("%s: invalid protocol attributes: port missing", resourceID)
-	}
-
-	if _, ok := attr["proto"]; !ok {
-		return nil, fmt.Errorf("%s: invalid protocol attributes: proto missing", resourceID)
-	}
-
-	var port int64
-	var err error
-
-	if v, ok := attr["port"].(int); ok {
-		port = int64(v)
-	}
-
-	if v, ok := attr["port"].(string); ok {
-		if port, err = strconv.ParseInt(v, 10, 64); err != nil {
-			return nil, fmt.Errorf("%s: invalid protocol attribute: invalid value for port: %s", resourceID, v)
-		}
-	}
-
-	t := &Protocol{
-		Port:     port,
-		Protocol: attr["proto"].(string),
-	}
-
-	return t, nil
+	return protocols, nil
 }

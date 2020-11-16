@@ -22,7 +22,8 @@ type ProtocolGroup struct {
 }
 
 type Protocol struct {
-	Port     int64  `json:"port" type:"integer"`
+	FromPort int64  `json:"from_port" type:"integer"`
+	ToPort   int64  `json:"to_port" type:"integer"`
 	Protocol string `json:"proto"`
 }
 
