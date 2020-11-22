@@ -7,73 +7,73 @@ import (
 func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"email": &schema.Schema{
+			"email": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"enabled": &schema.Schema{
+			"enabled": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"family_name": &schema.Schema{
+			"family_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"given_name": &schema.Schema{
+			"given_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"phone": &schema.Schema{
+			"phone": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"provisioned_by": &schema.Schema{
+			"provisioned_by": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created_at": &schema.Schema{
+			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"inventory": &schema.Schema{
+			"inventory": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"mfa_enabled": &schema.Schema{
+			"mfa_enabled": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"modified_at": &schema.Schema{
+			"modified_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"org_id": &schema.Schema{
+			"org_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"overlay_mfa_enabled": &schema.Schema{
+			"overlay_mfa_enabled": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"phone_verified": &schema.Schema{
+			"phone_verified": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"roles": &schema.Schema{
+			"roles": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"tags": &schema.Schema{
+			"tags": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,

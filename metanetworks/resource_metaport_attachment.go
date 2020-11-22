@@ -9,12 +9,12 @@ import (
 func resourceMetaportAttachment() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"metaport_id": &schema.Schema{
+			"metaport_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"network_element_id": &schema.Schema{
+			"network_element_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,

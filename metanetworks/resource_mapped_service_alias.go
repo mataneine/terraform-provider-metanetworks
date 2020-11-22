@@ -9,12 +9,12 @@ import (
 func resourceMappedServiceAlias() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"mapped_service_id": &schema.Schema{
+			"mapped_service_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"alias": &schema.Schema{
+			"alias": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
