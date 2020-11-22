@@ -49,18 +49,6 @@ func resourceMappedService() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"net_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"type": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"version": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 		Create: resourceMappedServiceCreate,
 		Read:   resourceMappedServiceRead,
