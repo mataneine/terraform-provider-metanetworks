@@ -23,7 +23,6 @@ type MetaPort struct {
 	ExpiresAt        string      `json:"expires_at,omitempty" meta_api:"read_only"`
 	ID               string      `json:"id,omitempty" meta_api:"read_only"`
 	ModifiedAt       string      `json:"modified_at,omitempty" meta_api:"read_only"`
-	NetworkElementID string      `json:"network_element_id,omitempty" meta_api:"read_only"`
 	OrgID            string      `json:"org_id,omitempty" meta_api:"read_only"`
 }
 

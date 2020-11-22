@@ -1,35 +1,30 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_metaport_attachment_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_metaport_attachment"
 description: |-
-  attach a network element to a metaport.
+  Attach mapped subnets and mapped services to a metaport.
 ---
 
-# metanetworks_metaport_attachment_resource
+# Resource: metanetworks_metaport_attachment
 
-attach a network element to a metaport.
+Attach mapped subnets and mapped services to a metaport.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_metaport_attachment" "example" {
-  metaport_id        = metanetworks_metaport.example-metaport.id
-  network_element_id = metanetworks_mapped_service.example.id
-}
-resource "metanetworks_mapped_service" "example" {
-  name = "example"
-  mapped_service = example.com"
-}
-output "example" {
-  value = metanetworks_mapped_service.example
-}
-resource "metanetworks_metaport" "example-metaport" {
-  name    = "example-metaport"
+resource "metanetworks_metaport" "example" {
+  name    = "example"
   enabled = false
 }
-output "example-metaport" {
-  value = metanetworks_metaport.example-metaport
+
+resource "metanetworks_mapped_service" "example" {
+  name           = "example"
+  mapped_service = "example.com"
+}
+
+resource "metanetworks_metaport_attachment" "example" {
+  metaport_id        = metanetworks_metaport.example.id
+  network_element_id = metanetworks_mapped_service.example.id
 }
 ```
 
@@ -37,5 +32,5 @@ output "example-metaport" {
 
 The following arguments are supported:
 
-* `metaport_id` - (required) The ID of the metaport.
-* `network_element_id` - (required) The ID of the network element to attach to the Metaport.
+* `metaport_id` - (Required) The ID of the metaport.
+* `network_element_id` - (Required) The ID of the network element to attach to the Metaport.

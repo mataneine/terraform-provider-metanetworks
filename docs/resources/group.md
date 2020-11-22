@@ -1,20 +1,19 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_group_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_group"
 description: |-
-  Create a new group.
+  Provides a group resource.
 ---
 
-# metanetworks_group_resource
+# Resource: metanetworks_group
 
-Create a new group.
+Provides a group resource.
 
 ## Example Usage
 
 ```hcl
 resource "metanetworks_group" "example" {
-  name = "an_example_group name"
+  name = "example"
 }
 ```
 
@@ -22,18 +21,18 @@ resource "metanetworks_group" "example" {
 
 The following arguments are supported:
 
-* `name` - (required) The group name.
-* `description` - The Group Description.
+* `name` - (Required) The name of the group.
+* `description` - (Optional) The description of the group.
+* `expression` - (Optional) Allows grouping entities by their tags. Filtering by tag value is also supported if provided. Supported operations: AND, OR, XOR, parenthesis.
+* `roles` - (Optional) The group roles.
+* `users` - (Optional) The group users.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
-* `expression` - Smart Groups Expression.
-* `provisioned_by` - Name of the Identity Provider. ????
+* `id` - The ID of the resource.
+* `provisioned_by` - Groups can be provisioned in the system either by locally creating the groups from the Admin portal or API. Another, more common practice, is to provision groups from an organization directory service, by way of SCIM or LDAP protocols.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
-* `org_id` - The Organization ID. ????
-* `members` - The Group members.
-* `roles` - Group roles
-* `users` - Users belonging to the group.
+* `org_id` - The ID of the organization.

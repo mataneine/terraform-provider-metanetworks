@@ -1,47 +1,34 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_routing_group_attachment_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_routing_group_attachment"
 description: |-
-  Map a routing group to (a ????) Network Element.
+  Attach mapped subnets and mapped services to a routing group.
 ---
 
-# metanetworks_routing_group_attachment
+# Resource: metanetworks_routing_group_attachment
 
-Map a routing group to a Network Element.
+Attach mapped subnets and mapped services to a routing group.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_routing_group_attachment" "example" {
-  routing_group_id   = metanetworks_routing_group.organization.id ???? can be []? | fix below
-  network_element_id = metanetworks_mapped_service.example.id
+data "metanetworks_group" "example" {
+  name = "example"
 }
+
 resource "metanetworks_routing_group" "organization" {
   name    = "organization"
-  sources = data.metanetworks_group.example_group.id
+  sources = data.metanetworks_group.example.id
 }
-output "organization" {
-  value = metanetworks_routing_group.organization
-}
-data "metanetworks_user" "example_user" {
-  email = "example.user@example.com"
-}
-output "example_user" {
-  value = data.metanetworks_user.example_user
-}
-data "metanetworks_group" "example_group" {
-  name = "example group"
-}
-output "example_group" {
-  value = data.metanetworks_group.example_group
-}
+
 resource "metanetworks_mapped_service" "example" {
-  name = "example"
-  mapped_service = example.com"
+  name           = "example"
+  mapped_service = "example.com"
 }
-output "example" {
-  value = metanetworks_mapped_service.example
+
+resource "metanetworks_routing_group_attachment" "example" {
+  routing_group_id   = metanetworks_routing_group.organization.id
+  network_element_id = metanetworks_mapped_service.example.id
 }
 ```
 
@@ -49,5 +36,5 @@ output "example" {
 
 The following arguments are supported:
 
-* `routing_group_id` - (required) The ID of the Routing Group.
-* `network_element_id` - (required) List ???? of IDs of groups and/or Users to attach to the routing group
+* `routing_group_id` - (Required) The ID of the routing group.
+* `network_element_id` - (Required) The ID of the network element to attach to the routing group.

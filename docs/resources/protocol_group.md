@@ -1,14 +1,13 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_protocol_group_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_protocol_group"
 description: |-
-  Modify a protocol group of the organization.
+  Provides a protocol group resource.
 ---
 
-# metanetworks_protocol_group
+# Resource: metanetworks_protocol_group
 
-Modify a protocol group of the organization.
+Provides a protocol group resource.
 
 ## Example Usage
 
@@ -16,8 +15,9 @@ Modify a protocol group of the organization.
 resource "metanetworks_protocol_group" "https" {
   name = "HTTPS"
   protocols {
-    port  = 443
-    proto = "tcp"
+    from_port = 443
+    to_port   = 443
+    proto     = "tcp"
   }
 }
 ```
@@ -26,17 +26,24 @@ resource "metanetworks_protocol_group" "https" {
 
 The following arguments are supported:
 
-* `description` - Protocol Group Description.
-* `name` - (required) Protocol Group Name.
-* `protocols` - List ???? of Protocols ( and Ports ) to attach to the Protocol Group.
-  * `proto` - (required) [ "ICMP' | "TCP" | "UDP" ]
-  * `port` - port number (no 'to_port' ????)
+* `name` - (Required) The name of the protocol group.
+* `description` - (Optional) The description of the protocol group.
+* `protocols` - (Optional) List of Protocols to attach to the protocol group.  Fields documented below.
+
+### Protocols Arguments
+
+For **protocols** the following attributes are supported.
+
+  * `proto` - (Required) [ "ICMP' | "TCP" | "UDP" ]
+  * `from_port` - (Required) from port number.
+  * `to_port` - (Required) to port number.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
+* `id` - The ID of the resource.
+* `read_only` - Protocol Group is read only.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
-* `org_id` - The ID of the Protocol Group.
-* `read_only` - Protocol Group is read only.
+* `org_id` - The ID of the organization.

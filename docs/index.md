@@ -1,7 +1,6 @@
 ---
 layout: "metanetworks"
 page_title: "Provider: metanetworks"
-sidebar_current: "docs-metanetworks-index"
 description: |-
   The metanetworks provider is used to interact with metanetworks resources.
 ---

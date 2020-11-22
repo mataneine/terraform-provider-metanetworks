@@ -1,42 +1,43 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_routing_group_attachment_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_routing_group_attachment"
 description: |-
-  Modify a routing group of the organization.
+  Provides a routing group resource.
 ---
 
-# metanetworks_routing_group_attachment
+# Resource: metanetworks_routing_group_attachment
 
-Modify a routing group of the organization.
+Provides a routing group resource.
 
 ## Example Usage
 
 ```hcl
+data "metanetworks_group" "example" {
+  name = "example"
+}
+
 resource "metanetworks_routing_group" "organization" {
   name    = "organization"
-  sources = data.metanetworks_group.example_group.id
+  sources = data.metanetworks_group.example.id
 }
-output "organization" {
-  value = metanetworks_routing_group.organization
 ```
 
 ## Argument Reference
 
 The following arguments are supported:
 
-* `name` - (required) The name of the Routing Group.
-* `description` - The description of the Routing Group.
-* `mapped_elements_ids` - (required / attribute ????) List of Mapped Subnets and Services to attach to the Routing Group.
-* `sources` - (List of ????) sources to attach to the Routing Group (Devices, Groups, Native Services, users) (concat users & groups ????)
-no exempt_sources ????
+* `name` - (Required) The name of the routing group.
+* `description` - (Optional) The description of the routing group.
+* `exempt_sources` - (Optional) Set of users and/or groups/devices to exempt from the routing group.
+* `sources` - (Optional) Set of users and/or groups/devices to attach to the routing group.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
+* `id` - The ID of the resource.
+* `priority` - The priority of the routing group.
+* `mapped_elements_ids` - Set of Mapped Subnets and Services to attach to the routing group.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
-* `org_id` - ID of the Orgabization
-* `priority` - ????
-id ???? - routing_group_id ????
+* `org_id` - The ID of the organization.

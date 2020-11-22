@@ -1,20 +1,20 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_mapped_service_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_mapped_service"
 description: |-
-  Create a new mapped_service.
+  Provides a mapped service resource.
 ---
 
-# metanetworks_mapped_service_resource
+# Resource: metanetworks_mapped_service
 
-Create a new mapped_service.
+Provides a mapped service resource.
 
 ## Example Usage
 
 ```hcl
 resource "metanetworks_mapped_service" "example" {
-  name = "an_example_mapped_service name"
+  name           = "example"
+  mapped_service = "example.com"
 }
 ```
 
@@ -22,21 +22,19 @@ resource "metanetworks_mapped_service" "example" {
 
 The following arguments are supported:
 
-* `name` - (required) The Mapped Service Name.
-* `mapped_service` - Mapped Service IP or Hostname
-* `description` - Mapped Service Description
+* `name` - (Required) The Mapped Service Name.
+* `mapped_service` - (Required) Mapped Service IP or Hostname
+* `description` - (Optional) Mapped Service Description
+* `tags` - (Optional) Tags are key/value attributes that can be used to group elements together.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
-* `tags` - List ???? of tags associated with the Mapped Service.
-* `created_at` - Creation timestamp.
-* `dns_name` - New Domain Name
+* `id` - The ID of the resource.
+* `dns_name` - <network_element_id>.<org_id>.nsof
+* `aliases` - Mapped Service IP or Hostname.
 * `expires_at` - Expiry timesptamp.
+* `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
-* `org_id` - ID of the Organization. ????
-* `aliases` - Mapped Service IP or Hostname
-* `net_id` - ????
-* `type` - ["Device" | "Service" | "Mapped Service" | "Mapped Subnet"]
-* `version` - [???? couldn't find in api????]
+* `org_id` - The ID of the organization.

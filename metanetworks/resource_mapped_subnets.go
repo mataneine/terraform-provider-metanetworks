@@ -65,18 +65,6 @@ func resourceMappedSubnets() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Required: true,
 			},
-			"net_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"type": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"version": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 		Create: resourceMappedSubnetsCreate,
 		Read:   resourceMappedSubnetsRead,

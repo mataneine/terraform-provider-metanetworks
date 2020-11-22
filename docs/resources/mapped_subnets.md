@@ -1,14 +1,13 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_mapped_subnets_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_mapped_subnets"
 description: |-
-  Create a new network element.
+  Provides a mapped subnet resource.
 ---
 
-# metanetworks_mapped_subnet_resource
+# Resource: metanetworks_mapped_subnet
 
-Create a new subnet network element.
+Provides a mapped subnet resource.
 
 ## Example Usage
 
@@ -23,22 +22,22 @@ resource "metanetworks_mapped_subnets" "example" {
 
 The following arguments are supported:
 
-* `name` - (required) Mapped Subnet Name.
-* `mapped_subnets` - (required) CIDRs to map for this service.
+* `name` - (Required) Mapped Subnet Name.
+* `description` - (Optional) Mapped Subnet Description
+* `mapped_subnets` - (Required) CIDRs to map for this service.
+* `tags` - (Optional) Tags are key/value attributes that can be used to group elements together.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
-* `platform` ???? - ???? not available in provider 
-* `description` - Mapped Subnet Description
-* `tags` - List ???? of tags associated with the subnet.
-* `mapped_domains` - List ???? of mapped domains
-* `created_at` - Creation timestamp.
-* `dns_name` - Hostname
+* `id` - The ID of the resource.
+* `dns_name` - <network_element_id>.<org_id>.nsof
+* `mapped_domains` - List of mapped domains
+  * `enterprise_dns` - 
+  * `mapped_domain` - 
+  * `name` - 
 * `expires_at` - Expiry timestamp
+* `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
-* `org_id` - ID of the Organization. ????
-* `net_id` - ID of the (subnet ????) network element. ????
-* `type` - ["Device" | "Service" | "Mapped Service" | "Mapped Subnet"]
-* `version` ???? (not in api) - 
+* `org_id` - The ID of the organization.

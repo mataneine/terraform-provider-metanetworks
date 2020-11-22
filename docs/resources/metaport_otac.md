@@ -1,27 +1,24 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_metaport_otac_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_metaport_otac"
 description: |-
-  Request a OTAC (Time-limited One-Time Password) for metaport installer download
+  Request a OTAC (Time-limited One-Time Password) for metaport installer download.
 ---
 
-# metanetworks_metaport_otac_resource
+# Resource: metanetworks_metaport_otac
 
 Request a OTAC (Time-limited One-Time Password) for metaport installer download.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_metaport_otac" "example" {
-  metaport_id        = metanetworks_metaport.example-metaport.id
-}
-resource "metanetworks_metaport" "example-metaport" {
-  name    = "example-metaport"
+resource "metanetworks_metaport" "example" {
+  name    = "example"
   enabled = false
 }
-output "example-metaport" {
-  value = metanetworks_metaport.example-metaport
+
+resource "metanetworks_metaport_otac" "example" {
+  metaport_id = metanetworks_metaport.example.id
 }
 ```
 
@@ -29,11 +26,11 @@ output "example-metaport" {
 
 The following arguments are supported:
 
-* `metaport_id` - (required) The ID of the Metaport.
-* `triggers` - ????
+* `metaport_id` - (Required) The ID of the metaport.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
-* `secret` - ????
+* `expires_in`- expiration time, default=60minutes.
+* `secret` - OTAC (Time-limited One-Time Password) for metaport installer download.

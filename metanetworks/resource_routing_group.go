@@ -20,6 +20,11 @@ func resourceRoutingGroup() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
+			"exempt_sources": &schema.Schema{
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
 			"sources": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
@@ -58,12 +63,14 @@ func resourceRoutingGroupCreate(d *schema.ResourceData, m interface{}) error {
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	mappedElementsIDs := resourceTypeSetToStringSlice(d.Get("mapped_elements_ids").(*schema.Set))
+	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 
 	routingGroup := RoutingGroup{
 		Name:           name,
 		Description:    description,
 		MappedElements: mappedElementsIDs,
+		ExemptSources:  exemptSources,
 		Sources:        sources,
 	}
 
@@ -107,12 +114,14 @@ func resourceRoutingGroupUpdate(d *schema.ResourceData, m interface{}) error {
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	mappedElementsIDs := resourceTypeSetToStringSlice(d.Get("mapped_elements_ids").(*schema.Set))
+	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 
 	routingGroup := RoutingGroup{
 		Name:           name,
 		Description:    description,
 		MappedElements: mappedElementsIDs,
+		ExemptSources:  exemptSources,
 		Sources:        sources,
 	}
 
@@ -143,6 +152,7 @@ func routingGroupToResource(d *schema.ResourceData, m *RoutingGroup) error {
 	d.Set("name", m.Name)
 	d.Set("description", m.Description)
 	d.Set("mapped_elements_ids", m.MappedElements)
+	d.Set("exempt_sources", m.ExemptSources)
 	d.Set("sources", m.Sources)
 
 	d.SetId(m.ID)

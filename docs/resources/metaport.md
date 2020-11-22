@@ -1,20 +1,19 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_metaport_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_metaport"
 description: |-
-  Create a new metaport.
+  Provides a metaport resource.
 ---
 
-# metanetworks_metaport_resource
+# Resource: metanetworks_metaport
 
-Create a new metaport
+Provides a metaport resource.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_metaport" "example-metaport" {
-  name    = "example-metaport"
+resource "metanetworks_metaport" "example" {
+  name    = "example"
   enabled = false
 }
 ```
@@ -23,19 +22,19 @@ resource "metanetworks_metaport" "example-metaport" {
 
 The following arguments are supported:
 
-* `name` - (required) The MetaPort name.
-* `description` - The MetaPort description.
-* `enabled` - (Not allowed for mapped service and mapped subnet ????)
-* `mapped_elements` - Network element IDs to attach to the Metaport
-* `allow_support` ???? attribute - ????
+* `name` - (Required) The name of the metaport.
+* `description` - (Optional) The description of the metaport.
+* `enabled` - (Optional) default=true.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
-* `created_at` - Creation timestamp.
-* `dns_name` - ????
+* `id` - The ID of the resource.
+* `allow_support` - Enable external support to access to this metaport remotely, default=true.
+* `mapped_elements` - Network elements attached to the metaport.
+* `dns_name` - <metaport_id>.<org_id>.nsof
 * `expires_at` - Expiry timestamp.
+* `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
-* `network_element_id` - The ID of the Metaport ????
-* `org_id` - The ID of the organization
+* `org_id` - The ID of the organization.

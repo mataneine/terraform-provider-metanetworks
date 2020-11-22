@@ -1,28 +1,25 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_mapped_service_alias_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_mapped_service_alias"
 description: |-
-  Create an Alias to a Mapped Service Network Element.
+  Set an alias to a mapped service.
 ---
 
-# metanetworks_mapped_service_alias_resource
+# Resource: metanetworks_mapped_service_alias
 
-Create an Alias to a Mapped Service Network Element
+  Set an alias to a mapped service.
 
 ## Example Usage
 
 ```hcl
+resource "metanetworks_mapped_service" "example" {
+  name           = "example"
+  mapped_service = "example.com"
+}
+
 resource "metanetworks_mapped_service_alias" "example" {
   mapped_service_id = metanetworks_mapped_service.example.id
   alias             = "example.com"
-}
-resource "metanetworks_mapped_service" "example" {
-  name = "example"
-  mapped_service = example.com"
-}
-output "example" {
-  value = metanetworks_mapped_service.example
 }
 ```
 
@@ -30,5 +27,5 @@ output "example" {
 
 The following arguments are supported:
 
-* `mapped_service_id` - (required) the ID of the Mapped Service Network Element.
-* `alias` - (required) Alias name
+* `mapped_service_id` - (Required) The ID of the mapped service.
+* `alias` - (Required) Alias name.

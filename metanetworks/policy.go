@@ -15,6 +15,7 @@ type Policy struct {
 	Enabled        bool     `json:"enabled,omitempty"`
 	Name           string   `json:"name"`
 	ProtocolGroups []string `json:"protocol_groups,omitempty"`
+	ExemptSources  []string `json:"exempt_sources,omitempty"`
 	Sources        []string `json:"sources,omitempty"`
 	CreatedAt      string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID             string   `json:"id,omitempty" meta_api:"read_only"`

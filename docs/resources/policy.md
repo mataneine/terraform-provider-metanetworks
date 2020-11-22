@@ -1,67 +1,57 @@
 ---
 layout: "metanetworks"
-page_title: "Metanetworks: metanetworks_policy_resource"
-sidebar_current: "docs-metanetworks-resource"
+page_title: "Meta Networks: metanetworks_policy"
 description: |-
-  Create a new policy.
+  Provides a policy resource.
 ---
 
-# metanetworks_policy_resource
+# Resource: metanetworks_policy
 
-Create a new policy.
+Provides a policy resource.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_policy" "example_policy" {
-  name = "an_example_policy name"
-  destinations = [
-    var.example_mapped_service.id,
-    var.example_mapped_subnet.id
-  ]
-  protocol_groups = [
-    var.protocol_groups.https.id,
-  ]
-  sources = [
-    var.example_user.id,
-    var.example_group.id
-  ]
+resource "metanetworks_mapped_service" "example" {
+  name           = "example"
+  mapped_service = "example.com"
 }
-resource "metanetworks_mapped_service" "example_mapped_service" {
-  name           = "example_mapped_service"
-  mapped_service = "example_mapped_service.example.com"
-}
-output "example_mapped_service" {
-  value = metanetworks_mapped_service.example_mapped_service
-}
-resource "metanetworks_mapped_subnets" "example_mapped_subnet" {
-  name           = "example_mapped_subnet"
+
+resource "metanetworks_mapped_subnets" "example" {
+  name           = "example"
   mapped_subnets = ["172.16.1.0/28"]
 }
-output "example_mapped_subnet" {
-  value = metanetworks_mapped_subnets.example_mapped_subnet
-}
+
 resource "metanetworks_protocol_group" "https" {
   name = "HTTPS"
   protocols {
-    port  = 443
-    proto = "tcp"
+    from_port = 443
+    to_port   = 443
+    proto     = "tcp"
   }
 }
-output "https" {
-  value = metanetworks_protocol_group.https
+
+data "metanetworks_user" "example" {
+  email = "user@example.com"
 }
-data "metanetworks_user" "example_user" {
-  email = "example.user@example.com"
+
+data "metanetworks_group" "example" {
+  name = "example"
 }
-output "example_user" {
-  value = data.metanetworks_user.example_user
-}
-data "metanetworks_group" "example_group" {
-  name = "example group"
-}
-output "example_group" {
-  value = data.metanetworks_group.example_group
+
+resource "metanetworks_policy" "example" {
+  name            = " example"
+  destinations    = [
+    metanetworks_mapped_service.example.id,
+    metanetworks_mapped_subnets.example.id
+  ]
+  protocol_groups = [
+    metanetworks_protocol_group.https.id,
+  ]
+  sources         = [
+    data.metanetworks_user.example.id,
+    data.metanetworks_group.example.id
+  ]
 }
 ```
 
@@ -69,17 +59,19 @@ output "example_group" {
 
 The following arguments are supported:
 
-* `description` - The Policy description.
-* `name` - The Policy name.
-* `destinations` - The Policy targets. (merge subnets & mapped services ????)
-* `enabled` - Is the Policy enabled.
-* `protocol_groups` - Protocols and Ports Restrictions
-* `sources` - (List of ????) The Policy sources.
+* `name` - (Required) The name of the policy.
+* `description` - (Optional) The description of the policy.
+* `destinations` - (Optional) Set of users and/or groups/devices/mapped subnets/mapped services to attach to the policy.
+* `enabled` - (Optional) default=true.
+* `protocol_groups` - (Optional) Set of protocol groups.
+* `exempt_sources` - (Optional) Set of users and/or groups/devices/mapped subnets/mapped services to exempt from the policy.
+* `sources` - (Optional) Set of users and/or groups/devices/mapped subnets/mapped services to attach to the policy.
 
 ## Attributes Reference
 
-The following attributes are exported:
+In addition to all arguments above, the following attributes are exported:
 
+* `id` - The ID of the resource.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
-* `org_id` - The Organization ID.
+* `org_id` - The ID of the organization.
