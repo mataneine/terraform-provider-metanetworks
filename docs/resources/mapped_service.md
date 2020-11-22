@@ -32,9 +32,9 @@ The following arguments are supported:
 In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the resource.
-* `dns_name` - <network_element_id>.<org_id>.nsof
+* `dns_name` - `<network_element_id>`.`<org_id>`.nsof
 * `aliases` - Mapped Service IP or Hostname.
-* `expires_at` - Expiry timesptamp.
+* `expires_at` - Expiration timesptamp.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
 * `org_id` - The ID of the organization.

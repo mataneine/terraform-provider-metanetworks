@@ -32,12 +32,18 @@ The following arguments are supported:
 In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the resource.
-* `dns_name` - <network_element_id>.<org_id>.nsof
-* `mapped_domains` - List of mapped domains
-  * `enterprise_dns` - 
-  * `mapped_domain` - 
-  * `name` - 
-* `expires_at` - Expiry timestamp
+* `dns_name` - `<network_element_id>`.`<org_id>`.nsof
+* `expires_at` - Expiration timestamp
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
 * `org_id` - The ID of the organization.
+* `mapped_domains` - List of mapped domains.  Fields documented below.
+
+### Mapped Domains Attributes
+
+For **mapped_domains** the following attributes are exported.
+
+* `name` - Mapped DNS suffix.
+* `mapped_domain` - Remote DNS suffix.
+* `enterprise_dns` - Resolve and route traffic according to routing group, default=false.
+

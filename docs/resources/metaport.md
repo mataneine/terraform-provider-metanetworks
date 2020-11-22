@@ -33,8 +33,8 @@ In addition to all arguments above, the following attributes are exported:
 * `id` - The ID of the resource.
 * `allow_support` - Enable external support to access to this metaport remotely, default=true.
 * `mapped_elements` - Network elements attached to the metaport.
-* `dns_name` - <metaport_id>.<org_id>.nsof
-* `expires_at` - Expiry timestamp.
+* `dns_name` - `<metaport_id>`.`<org_id>`.nsof
+* `expires_at` - Expiration timestamp.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
 * `org_id` - The ID of the organization.
