@@ -14,6 +14,7 @@ const (
 	groupsEndpoint string = "/v1/groups"
 )
 
+// Group ...
 type Group struct {
 	Description   string   `json:"description"`
 	Expression    string   `json:"expression,omitempty"`
@@ -28,7 +29,6 @@ type Group struct {
 	OrgID         string   `json:"org_id,omitempty" meta_api:"read_only"`
 }
 
-// groupToResource ...
 func groupToResource(d *schema.ResourceData, m *Group) error {
 	d.Set("description", m.Description)
 	d.Set("expression", m.Expression)

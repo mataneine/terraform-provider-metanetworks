@@ -4,13 +4,15 @@ import (
 	"encoding/json"
 )
 
-type tag struct {
+// Tag ...
+type Tag struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
 
+// GetTags ...
 func (c *Client) GetTags(endpoint string) (map[string]string, error) {
-	var tags []tag
+	var tags []Tag
 	err := c.Read(endpoint, &tags)
 	if err != nil {
 		return nil, err
@@ -24,10 +26,11 @@ func (c *Client) GetTags(endpoint string) (map[string]string, error) {
 	return tagMap, nil
 }
 
+// UpdateTags ...
 func (c *Client) UpdateTags(endpoint string, tags map[string]string) error {
-	tagsStruct := make([]tag, 0, len(tags))
+	tagsStruct := make([]Tag, 0, len(tags))
 	for key, value := range tags {
-		tagsStruct = append(tagsStruct, tag{Name: key, Value: value})
+		tagsStruct = append(tagsStruct, Tag{Name: key, Value: value})
 	}
 
 	jsonData, err := json.Marshal(&tagsStruct)

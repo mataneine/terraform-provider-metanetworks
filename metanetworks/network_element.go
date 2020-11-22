@@ -13,6 +13,7 @@ const (
 	networkElementsEndpoint string = "/v1/network_elements"
 )
 
+// NetworkElement ...
 type NetworkElement struct {
 	Aliases       []string       `json:"aliases,omitempty" meta_api:"read_only"`
 	CreatedAt     string         `json:"created_at,omitempty" meta_api:"read_only"`
@@ -33,6 +34,7 @@ type NetworkElement struct {
 	MappedDomains []MappedDomain `json:"mapped_domains,omitempty"`
 }
 
+// GetNetworkElement ...
 func (c *Client) GetNetworkElement(elementID string) (*NetworkElement, error) {
 	var networkElement NetworkElement
 	err := c.Read(networkElementsEndpoint+"/"+elementID+"?expand=true", &networkElement)
@@ -44,6 +46,7 @@ func (c *Client) GetNetworkElement(elementID string) (*NetworkElement, error) {
 	return &networkElement, nil
 }
 
+// UpdateNetworkElement ...
 func (c *Client) UpdateNetworkElement(networkElementID string, networkElement *NetworkElement) (*NetworkElement, error) {
 	resp, err := c.Update(networkElementsEndpoint+"/"+networkElementID, *networkElement)
 	if err != nil {
@@ -55,6 +58,7 @@ func (c *Client) UpdateNetworkElement(networkElementID string, networkElement *N
 	return updatedNetworkElement, nil
 }
 
+// CreateNetworkElement ...
 func (c *Client) CreateNetworkElement(networkElement *NetworkElement) (*NetworkElement, error) {
 	resp, err := c.Create(networkElementsEndpoint, *networkElement)
 	if err != nil {
@@ -70,6 +74,7 @@ func (c *Client) CreateNetworkElement(networkElement *NetworkElement) (*NetworkE
 	return createdNetworkElement, nil
 }
 
+// DeleteNetworkElement ...
 func (c *Client) DeleteNetworkElement(networkElementID string) error {
 	err := c.Delete(networkElementsEndpoint + "/" + networkElementID)
 	if err != nil {
@@ -79,6 +84,7 @@ func (c *Client) DeleteNetworkElement(networkElementID string) error {
 	return nil
 }
 
+// SetNetworkElementAlias ...
 func (c *Client) SetNetworkElementAlias(networkElementID string, alias string) (*NetworkElement, error) {
 	resp, err := c.Request(networkElementsEndpoint+"/"+networkElementID+"/aliases/"+alias, "PUT", nil, "")
 	if err != nil {
@@ -93,6 +99,7 @@ func (c *Client) SetNetworkElementAlias(networkElementID string, alias string) (
 	return &networkElement, nil
 }
 
+// DeleteNetworkElementAlias ...
 func (c *Client) DeleteNetworkElementAlias(networkElementID string, alias string) (*NetworkElement, error) {
 	resp, err := c.Request(networkElementsEndpoint+"/"+networkElementID+"/aliases/"+alias, "DELETE", nil, "")
 	if err != nil {
@@ -106,6 +113,7 @@ func (c *Client) DeleteNetworkElementAlias(networkElementID string, alias string
 	return &networkElement, nil
 }
 
+// SetNetworkElementMappedDomains ...
 func (c *Client) SetNetworkElementMappedDomains(networkElementID string, name string, mappedDomain *MappedDomain) (*MappedDomain, error) {
 	resp, err := c.SetMappedDomain(networkElementsEndpoint+"/"+networkElementID+"/mapped_domains/"+name, *mappedDomain)
 	if err != nil {
@@ -116,6 +124,7 @@ func (c *Client) SetNetworkElementMappedDomains(networkElementID string, name st
 	return resp, nil
 }
 
+// DeleteNetworkElementMappedDomains ...
 func (c *Client) DeleteNetworkElementMappedDomains(networkElementID string, name string) error {
 	err := c.Delete(networkElementsEndpoint + "/" + networkElementID + "/mapped_domains/" + name)
 	if err != nil {
@@ -125,6 +134,7 @@ func (c *Client) DeleteNetworkElementMappedDomains(networkElementID string, name
 	return nil
 }
 
+// SetNetworkElementTags ...
 func (c *Client) SetNetworkElementTags(d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		tagsMapInterface := d.Get("tags").(map[string]interface{})
