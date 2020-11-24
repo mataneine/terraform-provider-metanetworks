@@ -30,6 +30,11 @@ func resourcePolicy() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
+			"exempt_sources": &schema.Schema{
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
 			"sources": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
@@ -64,6 +69,7 @@ func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	enabled := d.Get("enabled").(bool)
+	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
 	protocolGroups := resourceTypeSetToStringSlice(d.Get("protocol_groups").(*schema.Set))
@@ -73,6 +79,7 @@ func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
 		Description:    description,
 		Enabled:        enabled,
 		Destinations:   destinations,
+		ExemptSources:  exemptSources,
 		Sources:        sources,
 		ProtocolGroups: protocolGroups,
 	}
@@ -116,6 +123,7 @@ func resourcePolicyUpdate(d *schema.ResourceData, m interface{}) error {
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
 	enabled := d.Get("enabled").(bool)
+	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
 	protocolGroups := resourceTypeSetToStringSlice(d.Get("protocol_groups").(*schema.Set))
@@ -125,6 +133,7 @@ func resourcePolicyUpdate(d *schema.ResourceData, m interface{}) error {
 		Description:    description,
 		Enabled:        enabled,
 		Destinations:   destinations,
+		ExemptSources:  exemptSources,
 		Sources:        sources,
 		ProtocolGroups: protocolGroups,
 	}
@@ -162,6 +171,7 @@ func policyToResource(d *schema.ResourceData, m *Policy) error {
 	d.Set("destinations", m.Destinations)
 	d.Set("enabled", m.Enabled)
 	d.Set("protocol_groups", m.ProtocolGroups)
+	d.Set("exempt_sources", m.ExemptSources)
 	d.Set("sources", m.Sources)
 	d.Set("created_at", m.CreatedAt)
 	d.Set("modified_at", m.ModifiedAt)

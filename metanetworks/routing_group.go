@@ -13,6 +13,7 @@ type RoutingGroup struct {
 	Name           string   `json:"name"`
 	Description    string   `json:"description"`
 	MappedElements []string `json:"mapped_elements_ids,omitempty"`
+	ExemptSources  []string `json:"exempt_sources,omitempty"`
 	Sources        []string `json:"sources,omitempty"`
 	CreatedAt      string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID             string   `json:"id,omitempty" meta_api:"read_only"`

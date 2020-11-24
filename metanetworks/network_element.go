@@ -30,7 +30,6 @@ type NetworkElement struct {
 	OwnerID       string         `json:"owner_id,omitempty" meta_api:"read_only"`
 	Platform      string         `json:"platform,omitempty" meta_api:"read_only"`
 	Type          string         `json:"type,omitempty" meta_api:"read_only"`
-	Version       int64          `json:"version,omitempty" meta_api:"read_only"`
 	MappedDomains []MappedDomain `json:"mapped_domains,omitempty"`
 }
 

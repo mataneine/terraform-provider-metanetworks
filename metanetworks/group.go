@@ -19,24 +19,24 @@ type Group struct {
 	Expression    string   `json:"expression,omitempty"`
 	Name          string   `json:"name"`
 	ProvisionedBy string   `json:"provisioned_by,omitempty" meta_api:"read_only"`
+	Roles         []string `json:"roles,omitempty" meta_api:"read_only"`
+	Users         []string `json:"users,omitempty" meta_api:"read_only"`
 	CreatedAt     string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID            string   `json:"id,omitempty" meta_api:"read_only"`
 	Members       []string `json:"members,omitempty" meta_api:"read_only"`
 	ModifiedAt    string   `json:"modified_at,omitempty" meta_api:"read_only"`
 	OrgID         string   `json:"org_id,omitempty" meta_api:"read_only"`
-	Roles         []string `json:"roles,omitempty" meta_api:"read_only"`
-	Users         []string `json:"users,omitempty" meta_api:"read_only"`
 }
 
 // groupToResource ...
 func groupToResource(d *schema.ResourceData, m *Group) error {
 	d.Set("description", m.Description)
+	d.Set("expression", m.Expression)
 	d.Set("name", m.Name)
-	d.Set("destinations", m.Description)
-	d.Set("enabled", m.Description)
-	d.Set("protocol_groups", m.Description)
-	d.Set("sources", m.Description)
-	d.Set("created_at", m.CreatedAt)
+	d.Set("provisioned_by", m.ProvisionedBy)
+	d.Set("roles", m.Roles)
+	d.Set("users", m.Users)
+	d.Set("created_at", m.ModifiedAt)
 	d.Set("modified_at", m.ModifiedAt)
 	d.Set("org_id", m.OrgID)
 
@@ -48,7 +48,7 @@ func groupToResource(d *schema.ResourceData, m *Group) error {
 // GetGroups ...
 func (c *Client) GetGroups(name string) ([]Group, error) {
 	var groups []Group
-	err := c.Read(groupsEndpoint+"?name="+url.QueryEscape(name), &groups)
+	err := c.Read(groupsEndpoint+"?expand=true&name="+url.QueryEscape(name), &groups)
 
 	if err != nil {
 		return nil, err

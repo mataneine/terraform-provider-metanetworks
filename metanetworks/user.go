@@ -59,7 +59,7 @@ func userToResource(d *schema.ResourceData, m *User) error {
 
 func (c *Client) GetUsers(email string) ([]User, error) {
 	var users []User
-	err := c.Read(usersEndpoint+"?email="+url.QueryEscape(email), &users)
+	err := c.Read(usersEndpoint+"?expand=true&email="+url.QueryEscape(email), &users)
 	if err != nil {
 		return nil, err
 	}

@@ -46,10 +46,6 @@ func resourceMetaport() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"network_element_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"org_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -200,11 +196,6 @@ func metaportToResource(d *schema.ResourceData, m *MetaPort) error {
 	}
 
 	err = d.Set("modified_at", m.ModifiedAt)
-	if err != nil {
-		return err
-	}
-
-	err = d.Set("network_element_id", m.NetworkElementID)
 	if err != nil {
 		return err
 	}
