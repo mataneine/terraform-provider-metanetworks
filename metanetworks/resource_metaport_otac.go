@@ -12,11 +12,9 @@ func resourceMetaportOTAC() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-			"triggers": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Required: true,
-				ForceNew: true,
+			"expires_in": &schema.Schema{
+				Type:     schema.TypeInt,
+				Computed: true,
 			},
 			"secret": &schema.Schema{
 				Type:      schema.TypeString,

@@ -36,7 +36,7 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"metanetworks_metaport":                     resourceMetaport(),
-			"metanetworks_metaportOTAC":                 resourceMetaportOTAC(),
+			"metanetworks_metaport_otac":                resourceMetaportOTAC(),
 			"metanetworks_metaport_attachment":          resourceMetaportAttachment(),
 			"metanetworks_mapped_service":               resourceMappedService(),
 			"metanetworks_mapped_service_alias":         resourceMappedServiceAlias(),
@@ -48,6 +48,9 @@ func Provider() *schema.Provider {
 			"metanetworks_routing_group":                resourceRoutingGroup(),
 			"metanetworks_routing_group_attachment":     resourceRoutingGroupAttachment(),
 			"metanetworks_auth_setting":                 resourceAuthSetting(),
+			"metanetworks_egress_route":                 resourceEgressRoute(),
+			"metanetworks_device_setting":               resourceDeviceSetting(),
+			"metanetworks_posture_check":                resourcePostureCheck(),
 		},
 	}
 
