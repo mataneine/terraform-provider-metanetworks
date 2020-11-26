@@ -34,9 +34,9 @@ The following arguments are supported:
 
 For **protocols** the following attributes are supported.
 
-  * `proto` - (Required) [ "ICMP' | "TCP" | "UDP" ]
-  * `from_port` - (Required) from port number.
-  * `to_port` - (Required) to port number.
+  * `proto` - (Required) The protocol. Valid values are `tcp`, `udp` and `icmp`.
+  * `from_port` - (Required) From port number.
+  * `to_port` - (Required) To port number.
 
 ## Attributes Reference
 

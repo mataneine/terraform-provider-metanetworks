@@ -27,6 +27,7 @@ The following arguments are supported:
 
 In addition to all arguments above, the following attributes are exported:
 
+* `id` - The ID of the resource.
 * `description` - The description of the group.
 * `expression` - Allows grouping entities by their tags. Filtering by tag value is also supported if provided. Supported operations: AND, OR, XOR, parenthesis.
 * `roles` - The group roles.

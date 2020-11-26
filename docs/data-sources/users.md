@@ -27,6 +27,7 @@ The following arguments are supported:
 
 In addition to all arguments above, the following attributes are exported:
 
+* `id` - The ID of the resource.
 * `description` - The description of the user.
 * `enabled` - default=true.
 * `family_name` - The last name of the user.

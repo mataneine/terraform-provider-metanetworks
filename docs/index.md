@@ -2,14 +2,12 @@
 layout: "metanetworks"
 page_title: "Provider: metanetworks"
 description: |-
-  The metanetworks provider is used to interact with metanetworks resources.
+  The Meta Networks provider is used to interact with Meta Networks APIs.
 ---
 
-# Metanetworks Provider
+# Meta Networks Provider
 
-Use this paragraph to give a high-level overview of your provider, and any configuration it requires.
-
-Use the navigation to the left to read about the available resources.
+The Meta Networks provider is used to interact with Meta Networks API.
 
 ## Example Usage
 
