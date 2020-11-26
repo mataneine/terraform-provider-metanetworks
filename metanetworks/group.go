@@ -14,6 +14,7 @@ const (
 	groupsEndpoint string = "/v1/groups"
 )
 
+// Group ...
 type Group struct {
 	Description   string   `json:"description"`
 	Expression    string   `json:"expression,omitempty"`
@@ -28,7 +29,6 @@ type Group struct {
 	OrgID         string   `json:"org_id,omitempty" meta_api:"read_only"`
 }
 
-// groupToResource ...
 func groupToResource(d *schema.ResourceData, m *Group) error {
 	d.Set("description", m.Description)
 	d.Set("expression", m.Expression)
@@ -111,8 +111,7 @@ func (c *Client) DeleteGroup(groupID string) error {
 	return nil
 }
 
-// modifyUsers ...
-func (c *Client) modifyUsers(groupID string, users []string, operation string) (*Group, error) {
+func (c *Client) updateGroupUsers(groupID string, users []string, operation string) (*Group, error) {
 	jsonData, err := json.Marshal(users)
 	if err != nil {
 		return nil, err
@@ -134,12 +133,12 @@ func (c *Client) modifyUsers(groupID string, users []string, operation string) (
 
 // AddGroupUsers ...
 func (c *Client) AddGroupUsers(groupID string, users []string) (*Group, error) {
-	return c.modifyUsers(groupID, users, "add_users")
+	return c.updateGroupUsers(groupID, users, "add_users")
 }
 
 // RemoveGroupUsers ...
 func (c *Client) RemoveGroupUsers(groupID string, users []string) (*Group, error) {
-	return c.modifyUsers(groupID, users, "remove_users")
+	return c.updateGroupUsers(groupID, users, "remove_users")
 }
 
 // SetGroupRoles ...

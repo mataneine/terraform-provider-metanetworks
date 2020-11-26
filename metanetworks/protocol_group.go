@@ -10,6 +10,7 @@ const (
 	protocolGroupsEndpoint string = "/v1/protocol_groups"
 )
 
+// ProtocolGroup ...
 type ProtocolGroup struct {
 	Description string     `json:"description"`
 	Name        string     `json:"name"`
@@ -21,12 +22,14 @@ type ProtocolGroup struct {
 	ReadOnly    bool       `json:"read_only,omitempty"`
 }
 
+// Protocol ...
 type Protocol struct {
 	FromPort int64  `json:"from_port" type:"integer"`
 	ToPort   int64  `json:"to_port" type:"integer"`
 	Protocol string `json:"proto"`
 }
 
+// GetProtocolGroup ...
 func (c *Client) GetProtocolGroup(protocolGroupID string) (*ProtocolGroup, error) {
 	var protocolGroup ProtocolGroup
 	err := c.Read(protocolGroupsEndpoint+"/"+protocolGroupID, &protocolGroup)
@@ -38,6 +41,7 @@ func (c *Client) GetProtocolGroup(protocolGroupID string) (*ProtocolGroup, error
 	return &protocolGroup, nil
 }
 
+// UpdateProtocolGroup ...
 func (c *Client) UpdateProtocolGroup(protocolGroupID string, protocolGroup *ProtocolGroup) (*ProtocolGroup, error) {
 	resp, err := c.Update(protocolGroupsEndpoint+"/"+protocolGroupID, *protocolGroup)
 	if err != nil {
@@ -49,6 +53,7 @@ func (c *Client) UpdateProtocolGroup(protocolGroupID string, protocolGroup *Prot
 	return updatedProtocolGroup, nil
 }
 
+// CreateProtocolGroup ...
 func (c *Client) CreateProtocolGroup(protocolGroup *ProtocolGroup) (*ProtocolGroup, error) {
 	resp, err := c.Create(protocolGroupsEndpoint, *protocolGroup)
 	if err != nil {
@@ -65,6 +70,7 @@ func (c *Client) CreateProtocolGroup(protocolGroup *ProtocolGroup) (*ProtocolGro
 	return createdProtocolGroup, nil
 }
 
+// DeleteProtocolGroup ...
 func (c *Client) DeleteProtocolGroup(protocolGroupID string) error {
 	err := c.Delete(protocolGroupsEndpoint + "/" + protocolGroupID)
 	if err != nil {

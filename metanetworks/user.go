@@ -11,6 +11,7 @@ const (
 	usersEndpoint string = "/v1/users"
 )
 
+// User ...
 type User struct {
 	Description       string              `json:"description"`
 	Email             string              `json:"email"`
@@ -57,6 +58,7 @@ func userToResource(d *schema.ResourceData, m *User) error {
 	return nil
 }
 
+// GetUsers ...
 func (c *Client) GetUsers(email string) ([]User, error) {
 	var users []User
 	err := c.Read(usersEndpoint+"?expand=true&email="+url.QueryEscape(email), &users)
@@ -71,6 +73,7 @@ func (c *Client) GetUsers(email string) ([]User, error) {
 	return users, nil
 }
 
+// GetUser ...
 func (c *Client) GetUser(userID string) (*User, error) {
 	var user User
 	err := c.Read(usersEndpoint+"/"+userID, &user)
@@ -81,6 +84,7 @@ func (c *Client) GetUser(userID string) (*User, error) {
 	return &user, nil
 }
 
+// UpdateUser ...
 func (c *Client) UpdateUser(userID string, user *User) (*User, error) {
 	resp, err := c.Update(usersEndpoint+"/"+userID, *user)
 	if err != nil {
@@ -91,6 +95,7 @@ func (c *Client) UpdateUser(userID string, user *User) (*User, error) {
 	return updatedUser, nil
 }
 
+// CreateUser ...
 func (c *Client) CreateUser(user *User) (*User, error) {
 	resp, err := c.Create(usersEndpoint, *user)
 	if err != nil {
@@ -101,6 +106,7 @@ func (c *Client) CreateUser(user *User) (*User, error) {
 	return createdUser, nil
 }
 
+// DeleteUser ...
 func (c *Client) DeleteUser(userID string) error {
 	err := c.Delete(usersEndpoint + "/" + userID)
 	if err != nil {
@@ -110,6 +116,7 @@ func (c *Client) DeleteUser(userID string) error {
 	return nil
 }
 
+// GetUserTags ...
 func (c *Client) GetUserTags(userID string) (map[string]string, error) {
 	tagMap, err := c.GetTags(usersEndpoint + "/" + userID + "/tags")
 	if err != nil {
@@ -119,6 +126,7 @@ func (c *Client) GetUserTags(userID string) (map[string]string, error) {
 	return tagMap, nil
 }
 
+// SetUserTags ...
 func (c *Client) SetUserTags(userID string, tags map[string]string) error {
 	err := c.UpdateTags(usersEndpoint+"/"+userID+"/tags", tags)
 	if err != nil {

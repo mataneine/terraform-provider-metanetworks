@@ -9,12 +9,12 @@ import (
 func resourceRoutingGroupAttachment() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"routing_group_id": &schema.Schema{
+			"routing_group_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"network_element_id": &schema.Schema{
+			"network_element_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,

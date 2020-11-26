@@ -7,20 +7,21 @@ import (
 func resourceMappedSubnetsMappedDomain() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"mapped_subnets_id": &schema.Schema{
+			"mapped_subnets_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"enterprise_dns": &schema.Schema{
+			"enterprise_dns": {
 				Type:     schema.TypeBool,
+				Default:  false,
 				Optional: true,
 			},
-			"mapped_domain": &schema.Schema{
+			"mapped_domain": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
