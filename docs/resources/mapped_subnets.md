@@ -5,7 +5,7 @@ description: |-
   Provides a mapped subnet resource.
 ---
 
-# Resource: metanetworks_mapped_subnet
+# Resource: metanetworks_mapped_subnets
 
 Provides a mapped subnet resource.
 
@@ -37,7 +37,7 @@ In addition to all arguments above, the following attributes are exported:
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
 * `org_id` - The ID of the organization.
-* `mapped_domains` - List of mapped domains.  Fields documented below.
+* `mapped_domains` - List of mapped domains. Fields documented below.
 
 ### Mapped Domains Attributes
 

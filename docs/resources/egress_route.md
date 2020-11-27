@@ -1,11 +1,11 @@
 ---
 layout: "metanetworks"
-page_title: "Meta Networks: metanetworks_egress_route_resource"
+page_title: "Meta Networks: metanetworks_egress_route"
 description: |-
   Provides an egress route resource.
 ---
 
-# Resource: metanetworks_egress_route_resource
+# Resource: metanetworks_egress_route
 
 Provides an egress route resource.
 
@@ -30,6 +30,32 @@ resource "metanetworks_egress_route" "example" {
     data.metanetworks_group.example.id
   ]
   via = metanetworks_mapped_subnets.example.id
+}
+```
+
+```hcl
+data "metanetworks_group" "example" {
+  name = "example"
+}
+
+data "metanetworks_locations" "all" {}
+
+locals {
+  locations = {
+    for location in data.metanetworks_locations.all.locations :
+    location.city => location
+  }
+}
+
+resource "metanetworks_egress_route" "example" {
+  name = "example"
+  destinations = [
+    "example.com",
+  ]
+  sources = [
+    data.metanetworks_group.example.id
+  ]
+  via = local.locations["New York"].name
 }
 ```
 
