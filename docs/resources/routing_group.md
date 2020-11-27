@@ -1,11 +1,11 @@
 ---
 layout: "metanetworks"
-page_title: "Meta Networks: metanetworks_routing_group_attachment"
+page_title: "Meta Networks: metanetworks_routing_group"
 description: |-
   Provides a routing group resource.
 ---
 
-# Resource: metanetworks_routing_group_attachment
+# Resource: metanetworks_routing_group
 
 Provides a routing group resource.
 
@@ -16,9 +16,11 @@ data "metanetworks_group" "example" {
   name = "example"
 }
 
-resource "metanetworks_routing_group" "organization" {
-  name    = "organization"
-  sources = data.metanetworks_group.example.id
+resource "metanetworks_routing_group" "example" {
+  name    = "example"
+  sources = [
+    data.metanetworks_group.example.id
+  ]
 }
 ```
 

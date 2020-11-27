@@ -13,8 +13,9 @@ Provides a metaport resource.
 
 ```hcl
 resource "metanetworks_metaport" "example" {
-  name    = "example"
-  enabled = false
+  name          = "example"
+  enabled       = false
+  allow_support = false
 }
 ```
 
