@@ -32,6 +32,7 @@ func Provider() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"metanetworks_group":     dataSourceGroup(),
+			"metanetworks_locations": dataSourceLocations(),
 			"metanetworks_user":      dataSourceUser(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
