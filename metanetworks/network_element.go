@@ -19,7 +19,7 @@ type NetworkElement struct {
 	CreatedAt     string         `json:"created_at,omitempty" meta_api:"read_only"`
 	Description   string         `json:"description"`
 	DNSName       string         `json:"dns_name,omitempty" meta_api:"read_only"`
-	Enabled       bool           `json:"enabled,omitempty" meta_api:"read_only"`
+	Enabled       *bool          `json:"enabled,omitempty"`
 	ExpiresAt     string         `json:"expires_at,omitempty" meta_api:"read_only"`
 	ID            string         `json:"id,omitempty" meta_api:"read_only"`
 	MappedService string         `json:"mapped_service,omitempty"`
