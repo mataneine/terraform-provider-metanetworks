@@ -109,7 +109,7 @@ func resourceMetaportAttachmentDelete(d *schema.ResourceData, m interface{}) err
 	// Note that if the entry has already been deleted this won't fail.
 	for i := 0; i < len(metaport.MappedElements); i++ {
 		if metaport.MappedElements[i] == elementID {
-			metaport.MappedElements = append(metaport.MappedElements[i:], metaport.MappedElements[i+1:]...)
+			metaport.MappedElements = append(metaport.MappedElements[:i], metaport.MappedElements[i+1:]...)
 			break
 		}
 	}
