@@ -70,10 +70,10 @@ func resourceMetaportCreate(d *schema.ResourceData, m interface{}) error {
 	allowSupport := d.Get("allow_support").(bool)
 
 	metaport := MetaPort{
-		Name:           name,
-		Description:    description,
-		Enabled:        enabled,
-		AllowSupport:   allowSupport,
+		Name:         name,
+		Description:  description,
+		Enabled:      enabled,
+		AllowSupport: &allowSupport,
 	}
 	var newMetaport *MetaPort
 	newMetaport, err := client.CreateMetaPort(&metaport)
@@ -115,10 +115,10 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 	allowSupport := d.Get("allow_support").(bool)
 
 	metaport := MetaPort{
-		Name:           name,
-		Description:    description,
-		Enabled:        enabled,
-		AllowSupport:   allowSupport,
+		Name:         name,
+		Description:  description,
+		Enabled:      enabled,
+		AllowSupport: &allowSupport,
 	}
 
 	var updatedMetaport *MetaPort
