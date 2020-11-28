@@ -22,9 +22,9 @@ resource "metanetworks_mapped_service" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) The Mapped Service Name.
+* `name` - (Required) The name of the mapped service.
 * `mapped_service` - (Required) Mapped Service IP or Hostname
-* `description` - (Optional) Mapped Service Description
+* `description` - (Optional) The description of the mapped service.
 * `tags` - (Optional) Tags are key/value attributes that can be used to group elements together.
 
 ## Attributes Reference
@@ -33,7 +33,7 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the resource.
 * `dns_name` - `<network_element_id>`.`<org_id>`.nsof
-* `aliases` - Mapped Service IP or Hostname.
+* `aliases` - The domain names of the native service.
 * `expires_at` - Expiration timesptamp.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.

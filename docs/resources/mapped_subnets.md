@@ -22,9 +22,9 @@ resource "metanetworks_mapped_subnets" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) Mapped Subnet Name.
-* `description` - (Optional) Mapped Subnet Description
-* `mapped_subnets` - (Required) CIDRs to map for this service.
+* `name` - (Required) The name of the mapped subnet.
+* `mapped_subnets` - (Required) Set of CIDRs IP Address/Net Mask `<XXX.XXX.XXX.XXX>`/`<XX>`.
+* `description` - (Optional) The description of the mapped subnet.
 * `tags` - (Optional) Tags are key/value attributes that can be used to group elements together.
 
 ## Attributes Reference
