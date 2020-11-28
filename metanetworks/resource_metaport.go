@@ -66,14 +66,12 @@ func resourceMetaportCreate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedElements := make([]string, 0)
 	enabled := d.Get("enabled").(bool)
 	allowSupport := d.Get("allow_support").(bool)
 
 	metaport := MetaPort{
 		Name:           name,
 		Description:    description,
-		MappedElements: mappedElements,
 		Enabled:        enabled,
 		AllowSupport:   allowSupport,
 	}
@@ -113,12 +111,6 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedElementsList := d.Get("mapped_elements").(*schema.Set).List()
-	mappedElements := make([]string, len(mappedElementsList))
-	for i, v := range mappedElements {
-		mappedElements[i] = string(v[i])
-	}
-
 	enabled := d.Get("enabled").(bool)
 	allowSupport := d.Get("allow_support").(bool)
 
@@ -126,7 +118,6 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 		Name:           name,
 		Description:    description,
 		Enabled:        enabled,
-		MappedElements: mappedElements,
 		AllowSupport:   allowSupport,
 	}
 

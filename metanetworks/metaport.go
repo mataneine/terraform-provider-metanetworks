@@ -16,7 +16,7 @@ type MetaPort struct {
 	Name           string      `json:"name"`
 	Description    string      `json:"description"`
 	Enabled        bool        `json:"enabled"`
-	MappedElements []string    `json:"mapped_elements"`
+	MappedElements []string    `json:"mapped_elements,omitempty"`
 	Connection     *Connection `json:"connection,omitempty" meta_api:"read_only"`
 	AllowSupport   bool        `json:"allow_support,omitempty" meta_api:"update_only"`
 	CreatedAt      string      `json:"created_at,omitempty" meta_api:"read_only"`
