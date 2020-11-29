@@ -34,7 +34,7 @@ resource "metanetworks_mapped_subnets_mapped_domain" "example" {
 
 The following arguments are supported:
 
-* `mapped_subnets_id` - (Required) ID of the subnets network element
+* `mapped_subnets_id` - (Required) ID of the mapped subnet network element.
 * `name` - (Required) Mapped DNS suffix.
 * `mapped_domain` - (Required) Remote DNS suffix.
 * `enterprise_dns` - (Optional) Resolve and route traffic according to routing group, default=false.

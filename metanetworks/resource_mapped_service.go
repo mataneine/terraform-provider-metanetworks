@@ -15,10 +15,19 @@ func resourceMappedService() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"mapped_service": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"tags": {
 				Type:     schema.TypeMap,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
+			},
+			"aliases": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Computed: true,
 			},
 			"created_at": {
 				Type:     schema.TypeString,
@@ -38,15 +47,6 @@ func resourceMappedService() *schema.Resource {
 			},
 			"org_id": {
 				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"mapped_service": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"aliases": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
 		},

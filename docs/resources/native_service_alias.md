@@ -13,7 +13,7 @@ description: |-
 
 ```hcl
 resource "metanetworks_native_service" "example" {
-  name           = "example"
+  name = "example"
 }
 
 resource "metanetworks_native_service_alias" "example" {

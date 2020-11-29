@@ -32,8 +32,8 @@ The following arguments are supported:
 In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the resource.
-* `dns_name` - `<network_element_id>`.`<org_id>`.nsof
 * `aliases` - The domain names of the native service.
+* `dns_name` - `<network_element_id>`.`<org_id>`.nsof
 * `expires_at` - Expiration timesptamp.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.

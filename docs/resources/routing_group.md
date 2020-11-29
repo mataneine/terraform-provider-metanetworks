@@ -39,7 +39,7 @@ The following arguments are supported:
 In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the resource.
-* `mapped_elements_ids` - Set of Mapped Subnets and Services to attach to the routing group.
+* `mapped_elements_ids` - Mapped Subnets/Services.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.
 * `org_id` - The ID of the organization.
