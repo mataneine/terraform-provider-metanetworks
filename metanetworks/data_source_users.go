@@ -1,11 +1,15 @@
 package metanetworks
 
 import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
+		ReadContext: dataSourceUserRead,
 		Schema: map[string]*schema.Schema{
 			"description": {
 				Type:     schema.TypeString,
@@ -79,24 +83,26 @@ func dataSourceUser() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Read: dataSourceUserRead,
 	}
 }
 
-func dataSourceUserRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*Client)
+
+	// // Warning or errors can be collected in a slice type
+	var diags diag.Diagnostics
 
 	email := d.Get("email").(string)
 
 	var user []User
 	user, err := client.GetUsers(email)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	err = userToResource(d, &user[0])
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return nil
+	return diags
 }
