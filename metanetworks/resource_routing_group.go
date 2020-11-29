@@ -44,7 +44,7 @@ func resourceRoutingGroup() *schema.Resource {
 			},
 			"priority": {
 				Type:     schema.TypeInt,
-				Computed: true,
+				Optional: true,
 			},
 		},
 		Create: resourceRoutingGroupCreate,
