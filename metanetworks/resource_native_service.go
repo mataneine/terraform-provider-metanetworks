@@ -25,6 +25,11 @@ func resourceNativeService() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
+			"aliases": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Computed: true,
+			},
 			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -43,11 +48,6 @@ func resourceNativeService() *schema.Resource {
 			},
 			"org_id": {
 				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"aliases": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
 		},
