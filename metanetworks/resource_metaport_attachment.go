@@ -2,6 +2,7 @@ package metanetworks
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -30,8 +31,8 @@ func resourceMetaportAttachmentCreate(d *schema.ResourceData, m interface{}) err
 	client := m.(*Client)
 
 	elementID := d.Get("network_element_id").(string)
-
 	metaportID := d.Get("metaport_id").(string)
+
 	metanetworksMutexKV.Lock(d.Id())
 	defer metanetworksMutexKV.Unlock(d.Id())
 
@@ -54,7 +55,7 @@ func resourceMetaportAttachmentCreate(d *schema.ResourceData, m interface{}) err
 		return err
 	}
 
-	d.SetId(metaportID + elementID)
+	d.SetId(fmt.Sprintf("%s_%s", metaportID, elementID))
 
 	return resourceMetaportAttachmentRead(d, m)
 }
@@ -80,7 +81,6 @@ func resourceMetaportAttachmentRead(d *schema.ResourceData, m interface{}) error
 			found = true
 			break
 		}
-
 	}
 
 	// If not present we need to destroy the terraform resource so that it is recreated.
