@@ -2,6 +2,7 @@ package metanetworks
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -54,7 +55,7 @@ func resourceRoutingGroupAttachmentCreate(d *schema.ResourceData, m interface{})
 		return err
 	}
 
-	d.SetId(routingGroupID + elementID)
+	d.SetId(fmt.Sprintf("%s_%s", routingGroupID, elementID))
 
 	return resourceRoutingGroupAttachmentRead(d, m)
 }
