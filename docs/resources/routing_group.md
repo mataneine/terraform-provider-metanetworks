@@ -32,13 +32,13 @@ The following arguments are supported:
 * `description` - (Optional) The description of the routing group.
 * `exempt_sources` - (Optional) Set of users and/or groups/devices to exempt from the routing group.
 * `sources` - (Optional) Set of users and/or groups/devices to attach to the routing group.
+* `priority` - (Optional) The priority of the routing group. Valid values are `0..256`.
 
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the resource.
-* `priority` - The priority of the routing group.
 * `mapped_elements_ids` - Set of Mapped Subnets and Services to attach to the routing group.
 * `created_at` - Creation timestamp.
 * `modified_at` - Modification timestamp.

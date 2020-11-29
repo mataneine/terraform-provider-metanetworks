@@ -20,7 +20,7 @@ type RoutingGroup struct {
 	ID             string   `json:"id,omitempty" meta_api:"read_only"`
 	ModifiedAt     string   `json:"modified_at,omitempty" meta_api:"read_only"`
 	OrgID          string   `json:"org_id,omitempty" meta_api:"read_only"`
-	Priority       int      `json:"priority,omitempty" meta_api:"read_only"`
+	Priority       int      `json:"priority,omitempty" meta_api:"update_only"`
 }
 
 // GetRoutingGroup ...
