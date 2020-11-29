@@ -49,6 +49,7 @@ func Provider() *schema.Provider {
 			"metanetworks_metaport":                     resourceMetaport(),
 			"metanetworks_native_service_alias":         resourceNativeServiceAlias(),
 			"metanetworks_native_service":               resourceNativeService(),
+			"metanetworks_peering":                      resourcePeering(),
 			"metanetworks_policy":                       resourcePolicy(),
 			"metanetworks_protocol_group":               resourceProtocolGroup(),
 			"metanetworks_routing_group_attachment":     resourceRoutingGroupAttachment(),
