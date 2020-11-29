@@ -38,6 +38,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"metanetworks_egress_route":                 resourceEgressRoute(),
 			"metanetworks_group":                        resourceGroup(),
+			"metanetworks_device":                       resourceDevice(),
 			"metanetworks_mapped_service_alias":         resourceMappedServiceAlias(),
 			"metanetworks_mapped_service":               resourceMappedService(),
 			"metanetworks_mapped_subnets_mapped_domain": resourceMappedSubnetsMappedDomain(),
