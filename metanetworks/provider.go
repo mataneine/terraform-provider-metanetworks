@@ -54,7 +54,7 @@ func Provider() *schema.Provider {
 			"metanetworks_policy":                       resourcePolicy(),
 			"metanetworks_protocol_group":               resourceProtocolGroup(),
 			"metanetworks_routing_group_attachment":     resourceRoutingGroupAttachment(),
-			"metanetworks_auth_setting":                 resourceAuthSetting(),
+			"metanetworks_user_setting":                 resourceUserSetting(),
 			"metanetworks_egress_route":                 resourceEgressRoute(),
 			"metanetworks_device_setting":               resourceDeviceSetting(),
 			"metanetworks_posture_check":                resourcePostureCheck(),

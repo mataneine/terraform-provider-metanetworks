@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAuthSetting() *schema.Resource {
+func resourceUserSetting() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"description": &schema.Schema{
@@ -42,7 +42,7 @@ func resourceAuthSetting() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"apply_to_entities": &schema.Schema{
+			"sources": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -77,17 +77,17 @@ func resourceAuthSetting() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Create: resourceAuthSettingCreate,
-		Read:   resourceAuthSettingRead,
-		Update: resourceAuthSettingUpdate,
-		Delete: resourceAuthSettingDelete,
+		Create: resourceUserSettingCreate,
+		Read:   resourceUserSettingRead,
+		Update: resourceUserSettingUpdate,
+		Delete: resourceUserSettingDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
 }
 
-func resourceAuthSettingCreate(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
@@ -101,10 +101,10 @@ func resourceAuthSettingCreate(d *schema.ResourceData, m interface{}) error {
 	overlayMFARefreshPeriod := d.Get("overlay_mfa_refresh_period").(int)
 	passwordExpiration := d.Get("password_expiration").(int)
 	allowedFactors := resourceTypeSetToStringSlice(d.Get("allowed_factors").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	prohibitedOS := resourceTypeSetToStringSlice(d.Get("prohibited_os").(*schema.Set))
 
-	authSetting := AuthSetting{
+	userSetting := UserSetting{
 		Name:                    name,
 		Description:             description,
 		Enabled:                 enabled,
@@ -120,32 +120,32 @@ func resourceAuthSettingCreate(d *schema.ResourceData, m interface{}) error {
 		ProhibitedOS:            prohibitedOS,
 	}
 
-	var newAuthSetting *AuthSetting
-	newAuthSetting, err := client.CreateAuthSetting(&authSetting)
+	var newUserSetting *UserSetting
+	newUserSetting, err := client.CreateUserSetting(&userSetting)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newAuthSetting.ID)
+	d.SetId(newUserSetting.ID)
 
-	err = authSettingToResource(d, newAuthSetting)
+	err = userSettingToResource(d, newUserSetting)
 	if err != nil {
 		return err
 	}
 
-	return resourceAuthSettingRead(d, m)
+	return resourceUserSettingRead(d, m)
 }
 
-func resourceAuthSettingRead(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	authSetting, err := client.GetAuthSetting(d.Id())
+	userSetting, err := client.GetUserSetting(d.Id())
 	if err != nil {
 		d.SetId("")
 		return nil
 	}
 
-	err = authSettingToResource(d, authSetting)
+	err = userSettingToResource(d, userSetting)
 	if err != nil {
 		return err
 	}
@@ -153,7 +153,7 @@ func resourceAuthSettingRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceAuthSettingUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
@@ -167,10 +167,10 @@ func resourceAuthSettingUpdate(d *schema.ResourceData, m interface{}) error {
 	overlayMFARefreshPeriod := d.Get("overlay_mfa_refresh_period").(int)
 	passwordExpiration := d.Get("password_expiration").(int)
 	allowedFactors := resourceTypeSetToStringSlice(d.Get("allowed_factors").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	prohibitedOS := resourceTypeSetToStringSlice(d.Get("prohibited_os").(*schema.Set))
 
-	authSetting := AuthSetting{
+	userSetting := UserSetting{
 		Name:                    name,
 		Description:             description,
 		Enabled:                 enabled,
@@ -186,26 +186,26 @@ func resourceAuthSettingUpdate(d *schema.ResourceData, m interface{}) error {
 		ProhibitedOS:            prohibitedOS,
 	}
 
-	var updatedAuthSetting *AuthSetting
-	updatedAuthSetting, err := client.UpdateAuthSetting(d.Id(), &authSetting)
+	var updatedUserSetting *UserSetting
+	updatedUserSetting, err := client.UpdateUserSetting(d.Id(), &userSetting)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(updatedAuthSetting.ID)
+	d.SetId(updatedUserSetting.ID)
 
-	err = authSettingToResource(d, updatedAuthSetting)
+	err = userSettingToResource(d, updatedUserSetting)
 	if err != nil {
 		return err
 	}
 
-	return resourceAuthSettingRead(d, m)
+	return resourceUserSettingRead(d, m)
 }
 
-func resourceAuthSettingDelete(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingDelete(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	err := client.DeleteAuthSetting(d.Id())
+	err := client.DeleteUserSetting(d.Id())
 	if err != nil {
 		return err
 	}
@@ -213,7 +213,7 @@ func resourceAuthSettingDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func authSettingToResource(d *schema.ResourceData, m *AuthSetting) error {
+func userSettingToResource(d *schema.ResourceData, m *UserSetting) error {
 	d.Set("description", m.Description)
 	d.Set("name", m.Name)
 	d.Set("allowed_factors", m.AllowedFactors)

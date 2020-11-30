@@ -61,12 +61,12 @@ func resourcePostureCheck() *schema.Resource {
 				Default:  true,
 				Optional: true,
 			},
-			"exempt_entities": &schema.Schema{
+			"exempt_sources": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
-			"apply_to_entities": &schema.Schema{
+			"sources": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -113,8 +113,8 @@ func resourcePostureCheckCreate(d *schema.ResourceData, m interface{}) error {
 	interval := d.Get("interval").(int)
 	check := d.Get("check").([]interface{})
 	when := resourceTypeSetToStringSlice(d.Get("when").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
-	exemptEntities := resourceTypeSetToStringSlice(d.Get("exempt_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
+	exemptEntities := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 
 	postureCheck := PostureCheck{
 		Name:              name,
@@ -179,8 +179,8 @@ func resourcePostureCheckUpdate(d *schema.ResourceData, m interface{}) error {
 	interval := d.Get("interval").(int)
 	check := d.Get("check").([]interface{})
 	when := resourceTypeSetToStringSlice(d.Get("when").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
-	exemptEntities := resourceTypeSetToStringSlice(d.Get("exempt_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
+	exemptEntities := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 
 	postureCheck := PostureCheck{
 		Name:              name,
