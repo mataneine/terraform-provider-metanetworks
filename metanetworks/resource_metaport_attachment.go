@@ -2,6 +2,7 @@ package metanetworks
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -9,12 +10,12 @@ import (
 func resourceMetaportAttachment() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"metaport_id": &schema.Schema{
+			"metaport_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"network_element_id": &schema.Schema{
+			"network_element_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -30,8 +31,8 @@ func resourceMetaportAttachmentCreate(d *schema.ResourceData, m interface{}) err
 	client := m.(*Client)
 
 	elementID := d.Get("network_element_id").(string)
-
 	metaportID := d.Get("metaport_id").(string)
+
 	metanetworksMutexKV.Lock(d.Id())
 	defer metanetworksMutexKV.Unlock(d.Id())
 
@@ -54,7 +55,7 @@ func resourceMetaportAttachmentCreate(d *schema.ResourceData, m interface{}) err
 		return err
 	}
 
-	d.SetId(metaportID + elementID)
+	d.SetId(fmt.Sprintf("%s_%s", metaportID, elementID))
 
 	return resourceMetaportAttachmentRead(d, m)
 }
@@ -80,7 +81,6 @@ func resourceMetaportAttachmentRead(d *schema.ResourceData, m interface{}) error
 			found = true
 			break
 		}
-
 	}
 
 	// If not present we need to destroy the terraform resource so that it is recreated.
@@ -109,7 +109,7 @@ func resourceMetaportAttachmentDelete(d *schema.ResourceData, m interface{}) err
 	// Note that if the entry has already been deleted this won't fail.
 	for i := 0; i < len(metaport.MappedElements); i++ {
 		if metaport.MappedElements[i] == elementID {
-			metaport.MappedElements = append(metaport.MappedElements[i:], metaport.MappedElements[i+1:]...)
+			metaport.MappedElements = append(metaport.MappedElements[:i], metaport.MappedElements[i+1:]...)
 			break
 		}
 	}

@@ -9,27 +9,27 @@ import (
 func resourceProtocolGroup() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"protocols": &schema.Schema{
+			"protocols": {
 				Type: schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"from_port": &schema.Schema{
+						"from_port": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
-						"to_port": &schema.Schema{
+						"to_port": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
-						"proto": &schema.Schema{
+						"proto": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
@@ -37,19 +37,19 @@ func resourceProtocolGroup() *schema.Resource {
 				},
 				Optional: true,
 			},
-			"created_at": &schema.Schema{
+			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified_at": &schema.Schema{
+			"modified_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"org_id": &schema.Schema{
+			"org_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"read_only": &schema.Schema{
+			"read_only": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},

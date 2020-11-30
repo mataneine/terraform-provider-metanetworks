@@ -20,12 +20,14 @@ const (
 	configPath         string = ".metanetworks/credentials.json"
 )
 
+// Config ...
 type Config struct {
 	APIKey    string `json:"api_key"`
 	APISecret string `json:"api_secret"`
 	Org       string `json:"org"`
 }
 
+// Client ...
 type Client struct {
 	APIKey           string
 	APISecret        string
@@ -36,6 +38,7 @@ type Client struct {
 	terraformVersion string
 }
 
+// Token ...
 type Token struct {
 	Token         string `json:"access_token"`
 	Expiry        int64  `json:"expires_in"`
@@ -44,6 +47,7 @@ type Token struct {
 	TokenType     string `json:"token_type"`
 }
 
+// Credentials ...
 type Credentials struct {
 	GrantType    string `json:"grant_type"`
 	Scope        string `json:"scope"`
@@ -107,6 +111,7 @@ func NewClient(key, secret, org string) (*Client, error) {
 	}, nil
 }
 
+// MakeAuthReqest ...
 func MakeAuthReqest(credentials *Credentials, client *http.Client) (*Token, error) {
 	jsonData, err := json.Marshal(credentials)
 	if err != nil {
@@ -131,6 +136,7 @@ func MakeAuthReqest(credentials *Credentials, client *http.Client) (*Token, erro
 	return &token, nil
 }
 
+// RefreshToken ..
 func (c *Client) RefreshToken() error {
 	credentialData := Credentials{
 		GrantType:    "refresh_token",

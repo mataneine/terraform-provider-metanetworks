@@ -14,29 +14,29 @@ const (
 	groupsEndpoint string = "/v1/groups"
 )
 
+// Group ...
 type Group struct {
 	Description   string   `json:"description"`
 	Expression    string   `json:"expression,omitempty"`
 	Name          string   `json:"name"`
 	ProvisionedBy string   `json:"provisioned_by,omitempty" meta_api:"read_only"`
+	Roles         []string `json:"roles,omitempty" meta_api:"read_only"`
+	Users         []string `json:"users,omitempty" meta_api:"read_only"`
 	CreatedAt     string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID            string   `json:"id,omitempty" meta_api:"read_only"`
 	Members       []string `json:"members,omitempty" meta_api:"read_only"`
 	ModifiedAt    string   `json:"modified_at,omitempty" meta_api:"read_only"`
 	OrgID         string   `json:"org_id,omitempty" meta_api:"read_only"`
-	Roles         []string `json:"roles,omitempty" meta_api:"read_only"`
-	Users         []string `json:"users,omitempty" meta_api:"read_only"`
 }
 
-// groupToResource ...
 func groupToResource(d *schema.ResourceData, m *Group) error {
 	d.Set("description", m.Description)
+	d.Set("expression", m.Expression)
 	d.Set("name", m.Name)
-	d.Set("destinations", m.Description)
-	d.Set("enabled", m.Description)
-	d.Set("protocol_groups", m.Description)
-	d.Set("sources", m.Description)
-	d.Set("created_at", m.CreatedAt)
+	d.Set("provisioned_by", m.ProvisionedBy)
+	d.Set("roles", m.Roles)
+	d.Set("users", m.Users)
+	d.Set("created_at", m.ModifiedAt)
 	d.Set("modified_at", m.ModifiedAt)
 	d.Set("org_id", m.OrgID)
 
@@ -48,7 +48,7 @@ func groupToResource(d *schema.ResourceData, m *Group) error {
 // GetGroups ...
 func (c *Client) GetGroups(name string) ([]Group, error) {
 	var groups []Group
-	err := c.Read(groupsEndpoint+"?name="+url.QueryEscape(name), &groups)
+	err := c.Read(groupsEndpoint+"?expand=true&name="+url.QueryEscape(name), &groups)
 
 	if err != nil {
 		return nil, err
@@ -111,8 +111,7 @@ func (c *Client) DeleteGroup(groupID string) error {
 	return nil
 }
 
-// modifyUsers ...
-func (c *Client) modifyUsers(groupID string, users []string, operation string) (*Group, error) {
+func (c *Client) updateGroupUsers(groupID string, users []string, operation string) (*Group, error) {
 	jsonData, err := json.Marshal(users)
 	if err != nil {
 		return nil, err
@@ -134,12 +133,12 @@ func (c *Client) modifyUsers(groupID string, users []string, operation string) (
 
 // AddGroupUsers ...
 func (c *Client) AddGroupUsers(groupID string, users []string) (*Group, error) {
-	return c.modifyUsers(groupID, users, "add_users")
+	return c.updateGroupUsers(groupID, users, "add_users")
 }
 
 // RemoveGroupUsers ...
 func (c *Client) RemoveGroupUsers(groupID string, users []string) (*Group, error) {
-	return c.modifyUsers(groupID, users, "remove_users")
+	return c.updateGroupUsers(groupID, users, "remove_users")
 }
 
 // SetGroupRoles ...

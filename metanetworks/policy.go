@@ -9,12 +9,14 @@ const (
 	policiesEndpoint string = "/v1/policies"
 )
 
+// Policy ...
 type Policy struct {
 	Description    string   `json:"description"`
 	Destinations   []string `json:"destinations,omitempty"`
 	Enabled        bool     `json:"enabled,omitempty"`
 	Name           string   `json:"name"`
 	ProtocolGroups []string `json:"protocol_groups,omitempty"`
+	ExemptSources  []string `json:"exempt_sources,omitempty"`
 	Sources        []string `json:"sources,omitempty"`
 	CreatedAt      string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID             string   `json:"id,omitempty" meta_api:"read_only"`
@@ -22,6 +24,7 @@ type Policy struct {
 	OrgID          string   `json:"org_id,omitempty" meta_api:"read_only"`
 }
 
+// GetPolicy ...
 func (c *Client) GetPolicy(policyID string) (*Policy, error) {
 	var policy Policy
 	err := c.Read(policiesEndpoint+"/"+policyID, &policy)
@@ -33,6 +36,7 @@ func (c *Client) GetPolicy(policyID string) (*Policy, error) {
 	return &policy, nil
 }
 
+// UpdatePolicy ...
 func (c *Client) UpdatePolicy(policyID string, policy *Policy) (*Policy, error) {
 	resp, err := c.Update(policiesEndpoint+"/"+policyID, *policy)
 	if err != nil {
@@ -44,6 +48,7 @@ func (c *Client) UpdatePolicy(policyID string, policy *Policy) (*Policy, error) 
 	return updatedPolicy, nil
 }
 
+// CreatePolicy ...
 func (c *Client) CreatePolicy(policy *Policy) (*Policy, error) {
 	resp, err := c.Create(policiesEndpoint, *policy)
 	if err != nil {
@@ -59,6 +64,7 @@ func (c *Client) CreatePolicy(policy *Policy) (*Policy, error) {
 	return createdPolicy, nil
 }
 
+// DeletePolicy ...
 func (c *Client) DeletePolicy(policyID string) error {
 	err := c.Delete(policiesEndpoint + "/" + policyID)
 	if err != nil {
