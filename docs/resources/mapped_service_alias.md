@@ -28,4 +28,4 @@ resource "metanetworks_mapped_service_alias" "example" {
 The following arguments are supported:
 
 * `mapped_service_id` - (Required) The ID of the mapped service.
-* `alias` - (Required) Alias name.
+* `alias` - (Required) Domain name.

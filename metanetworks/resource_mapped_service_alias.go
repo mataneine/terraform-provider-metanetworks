@@ -2,6 +2,7 @@ package metanetworks
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -9,12 +10,12 @@ import (
 func resourceMappedServiceAlias() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"mapped_service_id": &schema.Schema{
+			"mapped_service_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"alias": &schema.Schema{
+			"alias": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -49,7 +50,7 @@ func resourceMappedServiceAliasCreate(d *schema.ResourceData, m interface{}) err
 		return err
 	}
 
-	d.SetId(mappedServiceID + alias)
+	d.SetId(fmt.Sprintf("%s_%s", mappedServiceID, alias))
 
 	return resourceMappedServiceAliasRead(d, m)
 }

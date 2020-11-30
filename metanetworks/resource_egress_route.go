@@ -7,47 +7,47 @@ import (
 func resourceEgressRoute() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"via": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"exempt_sources": &schema.Schema{
+			"destinations": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
-			"sources": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-			},
-			"destinations": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-			},
-			"enabled": &schema.Schema{
+			"enabled": {
 				Type:     schema.TypeBool,
 				Default:  true,
 				Optional: true,
 			},
-			"created_at": &schema.Schema{
+			"exempt_sources": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"sources": {
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"via": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified_at": &schema.Schema{
+			"modified_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"org_id": &schema.Schema{
+			"org_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -65,22 +65,22 @@ func resourceEgressRoute() *schema.Resource {
 func resourceEgressRouteCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	via := d.Get("via").(string)
 	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
-	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
-	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 	enabled := d.Get("enabled").(bool)
+	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
+	name := d.Get("name").(string)
+	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
+	via := d.Get("via").(string)
 
 	egressRoute := EgressRoute{
-		Name:          name,
 		Description:   description,
-		Via:           via,
 		Destinations:  destinations,
-		Sources:       sources,
-		ExemptSources: exemptSources,
 		Enabled:       enabled,
+		ExemptSources: exemptSources,
+		Name:          name,
+		Sources:       sources,
+		Via:           via,
 	}
 
 	var newEgressRoute *EgressRoute
@@ -102,7 +102,6 @@ func resourceEgressRouteCreate(d *schema.ResourceData, m interface{}) error {
 func resourceEgressRouteRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	var egressRoute *EgressRoute
 	egressRoute, err := client.GetEgressRoute(d.Id())
 	if err != nil {
 		d.SetId("")
@@ -120,22 +119,22 @@ func resourceEgressRouteRead(d *schema.ResourceData, m interface{}) error {
 func resourceEgressRouteUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	via := d.Get("via").(string)
 	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
-	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
-	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
 	enabled := d.Get("enabled").(bool)
+	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
+	name := d.Get("name").(string)
+	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
+	via := d.Get("via").(string)
 
 	egressRoute := EgressRoute{
-		Name:          name,
 		Description:   description,
-		Via:           via,
 		Destinations:  destinations,
-		Sources:       sources,
-		ExemptSources: exemptSources,
 		Enabled:       enabled,
+		ExemptSources: exemptSources,
+		Name:          name,
+		Sources:       sources,
+		Via:           via,
 	}
 
 	var updatedEgressRoute *EgressRoute
@@ -158,17 +157,24 @@ func resourceEgressRouteDelete(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	err := client.DeleteEgressRoute(d.Id())
-	return err
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func egressRouteToResource(d *schema.ResourceData, m *EgressRoute) error {
-	d.Set("name", m.Name)
 	d.Set("description", m.Description)
-	d.Set("via", m.Via)
 	d.Set("destinations", m.Destinations)
-	d.Set("sources", m.Sources)
-	d.Set("exempt_sources", m.ExemptSources)
 	d.Set("enabled", m.Enabled)
+	d.Set("exempt_sources", m.ExemptSources)
+	d.Set("name", m.Name)
+	d.Set("sources", m.Sources)
+	d.Set("via", m.Via)
+	d.Set("created_at", m.CreatedAt)
+	d.Set("modified_at", m.ModifiedAt)
+	d.Set("org_id", m.OrgID)
 
 	d.SetId(m.ID)
 

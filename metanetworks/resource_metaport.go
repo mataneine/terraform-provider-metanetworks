@@ -7,46 +7,46 @@ import (
 func resourceMetaport() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"enabled": &schema.Schema{
+			"enabled": {
 				Type:     schema.TypeBool,
 				Default:  true,
 				Optional: true,
 			},
-			"mapped_elements": &schema.Schema{
+			"mapped_elements": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"allow_support": &schema.Schema{
+			"allow_support": {
 				Type:     schema.TypeBool,
 				Default:  true,
 				Optional: true,
 			},
-			"created_at": &schema.Schema{
+			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"dns_name": &schema.Schema{
+			"dns_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"expires_at": &schema.Schema{
+			"expires_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified_at": &schema.Schema{
+			"modified_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"org_id": &schema.Schema{
+			"org_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -66,16 +66,14 @@ func resourceMetaportCreate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedElements := make([]string, 0)
 	enabled := d.Get("enabled").(bool)
 	allowSupport := d.Get("allow_support").(bool)
 
 	metaport := MetaPort{
-		Name:           name,
-		Description:    description,
-		MappedElements: mappedElements,
-		Enabled:        enabled,
-		AllowSupport:   allowSupport,
+		Name:         name,
+		Description:  description,
+		Enabled:      enabled,
+		AllowSupport: &allowSupport,
 	}
 	var newMetaport *MetaPort
 	newMetaport, err := client.CreateMetaPort(&metaport)
@@ -113,21 +111,14 @@ func resourceMetaportUpdate(d *schema.ResourceData, m interface{}) error {
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedElementsList := d.Get("mapped_elements").(*schema.Set).List()
-	mappedElements := make([]string, len(mappedElementsList))
-	for i, v := range mappedElements {
-		mappedElements[i] = string(v[i])
-	}
-
 	enabled := d.Get("enabled").(bool)
 	allowSupport := d.Get("allow_support").(bool)
 
 	metaport := MetaPort{
-		Name:           name,
-		Description:    description,
-		Enabled:        enabled,
-		MappedElements: mappedElements,
-		AllowSupport:   allowSupport,
+		Name:         name,
+		Description:  description,
+		Enabled:      enabled,
+		AllowSupport: &allowSupport,
 	}
 
 	var updatedMetaport *MetaPort

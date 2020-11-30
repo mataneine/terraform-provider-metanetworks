@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceMappedService() *schema.Resource {
+func resourceNativeService() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -15,9 +15,10 @@ func resourceMappedService() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"mapped_service": {
-				Type:     schema.TypeString,
-				Required: true,
+			"enabled": {
+				Type:     schema.TypeBool,
+				Default:  true,
+				Optional: true,
 			},
 			"tags": {
 				Type:     schema.TypeMap,
@@ -50,37 +51,37 @@ func resourceMappedService() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Create: resourceMappedServiceCreate,
-		Read:   resourceMappedServiceRead,
-		Update: resourceMappedServiceUpdate,
-		Delete: resourceMappedServiceDelete,
+		Create: resourceNativeServiceCreate,
+		Read:   resourceNativeServiceRead,
+		Update: resourceNativeServiceUpdate,
+		Delete: resourceNativeServiceDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
 }
 
-func resourceMappedServiceCreate(d *schema.ResourceData, m interface{}) error {
+func resourceNativeServiceCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedService := d.Get("mapped_service").(string)
+	enabled := d.Get("enabled").(bool)
 
 	networkElement := NetworkElement{
-		Name:          name,
-		Description:   description,
-		MappedService: mappedService,
+		Name:        name,
+		Description: description,
+		Enabled:     &enabled,
 	}
-	var newMappedService *NetworkElement
-	newMappedService, err := client.CreateNetworkElement(&networkElement)
+	var newNativeService *NetworkElement
+	newNativeService, err := client.CreateNetworkElement(&networkElement)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newMappedService.ID)
+	d.SetId(newNativeService.ID)
 
-	err = mappedServiceToResource(d, newMappedService)
+	err = nativeServiceToResource(d, newNativeService)
 	if err != nil {
 		return err
 	}
@@ -89,10 +90,10 @@ func resourceMappedServiceCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return resourceMappedServiceRead(d, m)
+	return resourceNativeServiceRead(d, m)
 }
 
-func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
+func resourceNativeServiceRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	networkElement, err := client.GetNetworkElement(d.Id())
@@ -101,7 +102,7 @@ func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	err = mappedServiceToResource(d, networkElement)
+	err = nativeServiceToResource(d, networkElement)
 	if err != nil {
 		return err
 	}
@@ -109,25 +110,25 @@ func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceMappedServiceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceNativeServiceUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedService := d.Get("mapped_service").(string)
+	enabled := d.Get("enabled").(bool)
 
 	networkElement := NetworkElement{
-		Name:          name,
-		Description:   description,
-		MappedService: mappedService,
+		Name:        name,
+		Description: description,
+		Enabled:     &enabled,
 	}
-	var updatedMappedService *NetworkElement
-	updatedMappedService, err := client.UpdateNetworkElement(d.Id(), &networkElement)
+	var updatedNativeService *NetworkElement
+	updatedNativeService, err := client.UpdateNetworkElement(d.Id(), &networkElement)
 	if err != nil {
 		return err
 	}
 
-	err = mappedServiceToResource(d, updatedMappedService)
+	err = nativeServiceToResource(d, updatedNativeService)
 	if err != nil {
 		return err
 	}
@@ -136,10 +137,10 @@ func resourceMappedServiceUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return resourceMappedServiceRead(d, m)
+	return resourceNativeServiceRead(d, m)
 }
 
-func resourceMappedServiceDelete(d *schema.ResourceData, m interface{}) error {
+func resourceNativeServiceDelete(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	err := client.DeleteNetworkElement(d.Id())
@@ -150,10 +151,10 @@ func resourceMappedServiceDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func mappedServiceToResource(d *schema.ResourceData, m *NetworkElement) error {
+func nativeServiceToResource(d *schema.ResourceData, m *NetworkElement) error {
 	d.Set("name", m.Name)
 	d.Set("description", m.Description)
-	d.Set("mapped_service", m.MappedService)
+	d.Set("enabled", m.Enabled)
 	d.Set("aliases", m.Aliases)
 	d.Set("created_at", m.CreatedAt)
 	d.Set("dns_name", m.DNSName)

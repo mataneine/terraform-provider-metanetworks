@@ -6,26 +6,28 @@ import (
 )
 
 const (
-	egressRouteEndpoint string = "/v1/egress_routes"
+	egressRoutesEndpoint string = "/v1/egress_routes"
 )
 
+// EgressRoute ...
 type EgressRoute struct {
-	Name          string   `json:"name"`
 	Description   string   `json:"description"`
-	Via           string   `json:"via"`
-	Enabled       bool     `json:"enabled" type:"bool"`
 	Destinations  []string `json:"destinations,omitempty"`
-	Sources       []string `json:"sources,omitempty"`
+	Enabled       bool     `json:"enabled"`
 	ExemptSources []string `json:"exempt_sources,omitempty"`
+	Name          string   `json:"name"`
+	Sources       []string `json:"sources,omitempty"`
+	Via           string   `json:"via"`
 	CreatedAt     string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID            string   `json:"id,omitempty" meta_api:"read_only"`
 	ModifiedAt    string   `json:"modified_at,omitempty" meta_api:"read_only"`
 	OrgID         string   `json:"org_id,omitempty" meta_api:"read_only"`
 }
 
+// GetEgressRoute ...
 func (c *Client) GetEgressRoute(egressRouteID string) (*EgressRoute, error) {
 	var egressRoute EgressRoute
-	err := c.Read(egressRouteEndpoint+"/"+egressRouteID, &egressRoute)
+	err := c.Read(egressRoutesEndpoint+"/"+egressRouteID, &egressRoute)
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +36,9 @@ func (c *Client) GetEgressRoute(egressRouteID string) (*EgressRoute, error) {
 	return &egressRoute, nil
 }
 
+// UpdateEgressRoute ...
 func (c *Client) UpdateEgressRoute(egressRouteID string, egressRoute *EgressRoute) (*EgressRoute, error) {
-	resp, err := c.Update(egressRouteEndpoint+"/"+egressRouteID, *egressRoute)
+	resp, err := c.Update(egressRoutesEndpoint+"/"+egressRouteID, *egressRoute)
 	if err != nil {
 		return nil, err
 	}
@@ -45,8 +48,9 @@ func (c *Client) UpdateEgressRoute(egressRouteID string, egressRoute *EgressRout
 	return updatedEgressRoute, nil
 }
 
+// CreateEgressRoute ...
 func (c *Client) CreateEgressRoute(egressRoute *EgressRoute) (*EgressRoute, error) {
-	resp, err := c.Create(egressRouteEndpoint, *egressRoute)
+	resp, err := c.Create(egressRoutesEndpoint, *egressRoute)
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +64,9 @@ func (c *Client) CreateEgressRoute(egressRoute *EgressRoute) (*EgressRoute, erro
 	return createdEgressRoute, nil
 }
 
+// DeleteEgressRoute ...
 func (c *Client) DeleteEgressRoute(egressRouteID string) error {
-	err := c.Delete(egressRouteEndpoint + "/" + egressRouteID)
+	err := c.Delete(egressRoutesEndpoint + "/" + egressRouteID)
 	if err != nil {
 		return err
 	}

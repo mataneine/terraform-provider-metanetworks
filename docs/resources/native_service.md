@@ -1,20 +1,19 @@
 ---
 layout: "metanetworks"
-page_title: "Meta Networks: metanetworks_mapped_service"
+page_title: "Meta Networks: metanetworks_native_service"
 description: |-
-  Provides a mapped service resource.
+  Provides a native service resource.
 ---
 
-# Resource: metanetworks_mapped_service
+# Resource: metanetworks_native_service
 
-Provides a mapped service resource.
+Provides a native service resource.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_mapped_service" "example" {
-  name           = "example"
-  mapped_service = "example.com"
+resource "metanetworks_native_service" "example" {
+  name = "example"
 }
 ```
 
@@ -22,9 +21,9 @@ resource "metanetworks_mapped_service" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) The name of the mapped service.
-* `mapped_service` - (Required) Mapped Service IP or Hostname
-* `description` - (Optional) The description of the mapped service.
+* `name` - (Required) The name of the native service.
+* `description` - (Optional) The description of the native service.
+* `enabled` - (Optional) default=true.
 * `tags` - (Optional) Tags are key/value attributes that can be used to group elements together.
 
 ## Attributes Reference

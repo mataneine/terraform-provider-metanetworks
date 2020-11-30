@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceMappedService() *schema.Resource {
+func resourceDevice() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -15,7 +15,16 @@ func resourceMappedService() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"mapped_service": {
+			"enabled": {
+				Type:     schema.TypeBool,
+				Default:  true,
+				Optional: true,
+			},
+			"owner_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"platform": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -50,37 +59,41 @@ func resourceMappedService() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Create: resourceMappedServiceCreate,
-		Read:   resourceMappedServiceRead,
-		Update: resourceMappedServiceUpdate,
-		Delete: resourceMappedServiceDelete,
+		Create: resourceDeviceCreate,
+		Read:   resourceDeviceRead,
+		Update: resourceDeviceUpdate,
+		Delete: resourceDeviceDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
 }
 
-func resourceMappedServiceCreate(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedService := d.Get("mapped_service").(string)
+	enabled := d.Get("enabled").(bool)
+	ownerID := d.Get("owner_id").(string)
+	platform := d.Get("platform").(string)
 
 	networkElement := NetworkElement{
-		Name:          name,
-		Description:   description,
-		MappedService: mappedService,
+		Name:        name,
+		Description: description,
+		Enabled:     &enabled,
+		OwnerID:     ownerID,
+		Platform:    platform,
 	}
-	var newMappedService *NetworkElement
-	newMappedService, err := client.CreateNetworkElement(&networkElement)
+	var newDevice *NetworkElement
+	newDevice, err := client.CreateNetworkElement(&networkElement)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newMappedService.ID)
+	d.SetId(newDevice.ID)
 
-	err = mappedServiceToResource(d, newMappedService)
+	err = deviceToResource(d, newDevice)
 	if err != nil {
 		return err
 	}
@@ -89,10 +102,10 @@ func resourceMappedServiceCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return resourceMappedServiceRead(d, m)
+	return resourceDeviceRead(d, m)
 }
 
-func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	networkElement, err := client.GetNetworkElement(d.Id())
@@ -101,7 +114,7 @@ func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 
-	err = mappedServiceToResource(d, networkElement)
+	err = deviceToResource(d, networkElement)
 	if err != nil {
 		return err
 	}
@@ -109,25 +122,29 @@ func resourceMappedServiceRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceMappedServiceUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	mappedService := d.Get("mapped_service").(string)
+	enabled := d.Get("enabled").(bool)
+	ownerID := d.Get("owner_id").(string)
+	platform := d.Get("platform").(string)
 
 	networkElement := NetworkElement{
-		Name:          name,
-		Description:   description,
-		MappedService: mappedService,
+		Name:        name,
+		Description: description,
+		Enabled:     &enabled,
+		OwnerID:     ownerID,
+		Platform:    platform,
 	}
-	var updatedMappedService *NetworkElement
-	updatedMappedService, err := client.UpdateNetworkElement(d.Id(), &networkElement)
+	var updatedDevice *NetworkElement
+	updatedDevice, err := client.UpdateNetworkElement(d.Id(), &networkElement)
 	if err != nil {
 		return err
 	}
 
-	err = mappedServiceToResource(d, updatedMappedService)
+	err = deviceToResource(d, updatedDevice)
 	if err != nil {
 		return err
 	}
@@ -136,10 +153,10 @@ func resourceMappedServiceUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	return resourceMappedServiceRead(d, m)
+	return resourceDeviceRead(d, m)
 }
 
-func resourceMappedServiceDelete(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceDelete(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	err := client.DeleteNetworkElement(d.Id())
@@ -150,10 +167,12 @@ func resourceMappedServiceDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func mappedServiceToResource(d *schema.ResourceData, m *NetworkElement) error {
+func deviceToResource(d *schema.ResourceData, m *NetworkElement) error {
 	d.Set("name", m.Name)
 	d.Set("description", m.Description)
-	d.Set("mapped_service", m.MappedService)
+	d.Set("enabled", m.Enabled)
+	d.Set("owner_id", m.OwnerID)
+	d.Set("platform", m.Platform)
 	d.Set("aliases", m.Aliases)
 	d.Set("created_at", m.CreatedAt)
 	d.Set("dns_name", m.DNSName)
