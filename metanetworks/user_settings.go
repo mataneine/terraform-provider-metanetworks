@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	userSettingEndpoint string = "/v1/settings/auth"
+	userSettingsEndpoint string = "/v1/settings/auth"
 )
 
-type UserSetting struct {
+type UserSettings struct {
 	Description             string   `json:"description"`
 	AllowedFactors          []string `json:"allowed_factors,omitempty"`
 	ApplyToEntities         []string `json:"apply_to_entities,omitempty"`
@@ -28,45 +28,45 @@ type UserSetting struct {
 	ModifiedAt              string   `json:"modified_at,omitempty" meta_api:"read_only"`
 }
 
-func (c *Client) GetUserSetting(userSettingID string) (*UserSetting, error) {
-	var userSetting UserSetting
-	err := c.Read(userSettingEndpoint+"/"+userSettingID, &userSetting)
+func (c *Client) GetUserSettings(userSettingsID string) (*UserSettings, error) {
+	var userSettings UserSettings
+	err := c.Read(userSettingsEndpoint+"/"+userSettingsID, &userSettings)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("Returning Auth Setting from Get: %s", userSetting.ID)
-	return &userSetting, nil
+	log.Printf("Returning Auth Setting from Get: %s", userSettings.ID)
+	return &userSettings, nil
 }
 
-func (c *Client) UpdateUserSetting(userSettingID string, userSetting *UserSetting) (*UserSetting, error) {
-	resp, err := c.Update(userSettingEndpoint+"/"+userSettingID, *userSetting)
+func (c *Client) UpdateUserSettings(userSettingsID string, userSettings *UserSettings) (*UserSettings, error) {
+	resp, err := c.Update(userSettingsEndpoint+"/"+userSettingsID, *userSettings)
 	if err != nil {
 		return nil, err
 	}
-	updatedUserSetting, _ := resp.(*UserSetting)
+	updatedUserSettings, _ := resp.(*UserSettings)
 
-	log.Printf("Returning Auth Setting from Update: %s", updatedUserSetting.ID)
-	return updatedUserSetting, nil
+	log.Printf("Returning Auth Setting from Update: %s", updatedUserSettings.ID)
+	return updatedUserSettings, nil
 }
 
-func (c *Client) CreateUserSetting(userSetting *UserSetting) (*UserSetting, error) {
-	resp, err := c.Create(userSettingEndpoint, *userSetting)
+func (c *Client) CreateUserSettings(userSettings *UserSettings) (*UserSettings, error) {
+	resp, err := c.Create(userSettingsEndpoint, *userSettings)
 	if err != nil {
 		return nil, err
 	}
 
-	createdUserSetting, ok := resp.(*UserSetting)
+	createdUserSettings, ok := resp.(*UserSettings)
 	if !ok {
 		return nil, errors.New("Object returned from API was not a Auth Setting Pointer")
 	}
 
-	log.Printf("Returning Auth Setting from Create: %s", createdUserSetting.ID)
-	return createdUserSetting, nil
+	log.Printf("Returning Auth Setting from Create: %s", createdUserSettings.ID)
+	return createdUserSettings, nil
 }
 
-func (c *Client) DeleteUserSetting(userSettingID string) error {
-	err := c.Delete(userSettingEndpoint + "/" + userSettingID)
+func (c *Client) DeleteUserSettings(userSettingsID string) error {
+	err := c.Delete(userSettingsEndpoint + "/" + userSettingsID)
 	if err != nil {
 		return err
 	}

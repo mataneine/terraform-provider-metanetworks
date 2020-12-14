@@ -1,19 +1,19 @@
 ---
 layout: "metanetworks"
-page_title: "Meta Networks: metanetworks_user_setting"
+page_title: "Meta Networks: metanetworks_user_settings"
 description: |-
-  Provides a user authentication setting resource.
+  Provides a user authentication settings resource.
 ---
 
-# Resource: metanetworks_user_setting
+# Resource: metanetworks_user_settings
 
-Provides a user authentication setting resource.
+Provides a user authentication settings resource.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_metaport" "example" {
-  name                  = "Default_Org_User_Setting"
+resource "metanetworks_user_settings" "example" {
+  name                  = "Default_Org_User_Settings"
   description           = "Example Description"
   apply_on_org          = true
 }
@@ -23,8 +23,8 @@ resource "metanetworks_metaport" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required). The name of the user setting.
-* `description` - (Optional). The description of the user setting.
+* `name` - (Required). The name of the user settings.
+* `description` - (Optional). The description of the user settings.
 * `allowed_factors` - (Optional). List of allowed MFA factors when using Meta as idP. Values: `SMS`, `SOFTWARE_TOTP`, `VOICECALL`, `EMAIL`.
 * `enabled` - (Optional) default=true.
 * `apply_on_org` - (Optional; Required if `sources` is omitted). Applies setting to entire organization.
