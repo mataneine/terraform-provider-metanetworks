@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceUserSetting() *schema.Resource {
+func resourceUserSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"description": &schema.Schema{
@@ -77,17 +77,17 @@ func resourceUserSetting() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Create: resourceUserSettingCreate,
-		Read:   resourceUserSettingRead,
-		Update: resourceUserSettingUpdate,
-		Delete: resourceUserSettingDelete,
+		Create: resourceUserSettingsCreate,
+		Read:   resourceUserSettingsRead,
+		Update: resourceUserSettingsUpdate,
+		Delete: resourceUserSettingsDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
 }
 
-func resourceUserSettingCreate(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
@@ -104,7 +104,7 @@ func resourceUserSettingCreate(d *schema.ResourceData, m interface{}) error {
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	prohibitedOS := resourceTypeSetToStringSlice(d.Get("prohibited_os").(*schema.Set))
 
-	userSetting := UserSetting{
+	userSettings := UserSettings{
 		Name:                    name,
 		Description:             description,
 		Enabled:                 enabled,
@@ -120,32 +120,32 @@ func resourceUserSettingCreate(d *schema.ResourceData, m interface{}) error {
 		ProhibitedOS:            prohibitedOS,
 	}
 
-	var newUserSetting *UserSetting
-	newUserSetting, err := client.CreateUserSetting(&userSetting)
+	var newUserSettings *UserSettings
+	newUserSettings, err := client.CreateUserSettings(&userSettings)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newUserSetting.ID)
+	d.SetId(newUserSettings.ID)
 
-	err = userSettingToResource(d, newUserSetting)
+	err = userSettingsToResource(d, newUserSettings)
 	if err != nil {
 		return err
 	}
 
-	return resourceUserSettingRead(d, m)
+	return resourceUserSettingsRead(d, m)
 }
 
-func resourceUserSettingRead(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingsRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	userSetting, err := client.GetUserSetting(d.Id())
+	userSettings, err := client.GetUserSettings(d.Id())
 	if err != nil {
 		d.SetId("")
 		return nil
 	}
 
-	err = userSettingToResource(d, userSetting)
+	err = userSettingsToResource(d, userSettings)
 	if err != nil {
 		return err
 	}
@@ -153,7 +153,7 @@ func resourceUserSettingRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceUserSettingUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
@@ -170,7 +170,7 @@ func resourceUserSettingUpdate(d *schema.ResourceData, m interface{}) error {
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	prohibitedOS := resourceTypeSetToStringSlice(d.Get("prohibited_os").(*schema.Set))
 
-	userSetting := UserSetting{
+	userSettings := UserSettings{
 		Name:                    name,
 		Description:             description,
 		Enabled:                 enabled,
@@ -186,26 +186,26 @@ func resourceUserSettingUpdate(d *schema.ResourceData, m interface{}) error {
 		ProhibitedOS:            prohibitedOS,
 	}
 
-	var updatedUserSetting *UserSetting
-	updatedUserSetting, err := client.UpdateUserSetting(d.Id(), &userSetting)
+	var updatedUserSettings *UserSettings
+	updatedUserSettings, err := client.UpdateUserSettings(d.Id(), &userSettings)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(updatedUserSetting.ID)
+	d.SetId(updatedUserSettings.ID)
 
-	err = userSettingToResource(d, updatedUserSetting)
+	err = userSettingsToResource(d, updatedUserSettings)
 	if err != nil {
 		return err
 	}
 
-	return resourceUserSettingRead(d, m)
+	return resourceUserSettingsRead(d, m)
 }
 
-func resourceUserSettingDelete(d *schema.ResourceData, m interface{}) error {
+func resourceUserSettingsDelete(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	err := client.DeleteUserSetting(d.Id())
+	err := client.DeleteUserSettings(d.Id())
 	if err != nil {
 		return err
 	}
@@ -213,7 +213,7 @@ func resourceUserSettingDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func userSettingToResource(d *schema.ResourceData, m *UserSetting) error {
+func userSettingsToResource(d *schema.ResourceData, m *UserSettings) error {
 	d.Set("description", m.Description)
 	d.Set("name", m.Name)
 	d.Set("allowed_factors", m.AllowedFactors)
