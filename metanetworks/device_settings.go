@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	deviceSettingEndpoint string = "/v1/settings/device"
+	deviceSettingsEndpoint string = "/v1/settings/device"
 )
 
-type DeviceSetting struct {
+type DeviceSettings struct {
 	Name                      string   `json:"name"`
 	Description               string   `json:"description,omitempty"`
 	DirectSSO                 string   `json:"direct_sso,omitempty"`
@@ -28,45 +28,45 @@ type DeviceSetting struct {
 	ModifiedAt                string   `json:"modified_at,omitempty" meta_api:"read_only"`
 }
 
-func (c *Client) GetDeviceSetting(deviceSettingID string) (*DeviceSetting, error) {
-	var deviceSetting DeviceSetting
-	err := c.Read(deviceSettingEndpoint+"/"+deviceSettingID, &deviceSetting)
+func (c *Client) GetDeviceSettings(deviceSettingsID string) (*DeviceSettings, error) {
+	var deviceSettings DeviceSettings
+	err := c.Read(deviceSettingsEndpoint+"/"+deviceSettingsID, &deviceSettings)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("Returning Auth Setting from Get: %s", deviceSetting.ID)
-	return &deviceSetting, nil
+	log.Printf("Returning Auth Setting from Get: %s", deviceSettings.ID)
+	return &deviceSettings, nil
 }
 
-func (c *Client) UpdateDeviceSetting(deviceSettingID string, deviceSetting *DeviceSetting) (*DeviceSetting, error) {
-	resp, err := c.Update(deviceSettingEndpoint+"/"+deviceSettingID, *deviceSetting)
+func (c *Client) UpdateDeviceSettings(deviceSettingsID string, deviceSettings *DeviceSettings) (*DeviceSettings, error) {
+	resp, err := c.Update(deviceSettingsEndpoint+"/"+deviceSettingsID, *deviceSettings)
 	if err != nil {
 		return nil, err
 	}
-	updatedDeviceSetting, _ := resp.(*DeviceSetting)
+	updatedDeviceSettings, _ := resp.(*DeviceSettings)
 
-	log.Printf("Returning Auth Setting from Update: %s", updatedDeviceSetting.ID)
-	return updatedDeviceSetting, nil
+	log.Printf("Returning Auth Setting from Update: %s", updatedDeviceSettings.ID)
+	return updatedDeviceSettings, nil
 }
 
-func (c *Client) CreateDeviceSetting(deviceSetting *DeviceSetting) (*DeviceSetting, error) {
-	resp, err := c.Create(deviceSettingEndpoint, *deviceSetting)
+func (c *Client) CreateDeviceSettings(deviceSettings *DeviceSettings) (*DeviceSettings, error) {
+	resp, err := c.Create(deviceSettingsEndpoint, *deviceSettings)
 	if err != nil {
 		return nil, err
 	}
 
-	createdDeviceSetting, ok := resp.(*DeviceSetting)
+	createdDeviceSettings, ok := resp.(*DeviceSettings)
 	if !ok {
 		return nil, errors.New("Object returned from API was not a Auth Setting Pointer")
 	}
 
-	log.Printf("Returning Auth Setting from Create: %s", createdDeviceSetting.ID)
-	return createdDeviceSetting, nil
+	log.Printf("Returning Auth Setting from Create: %s", createdDeviceSettings.ID)
+	return createdDeviceSettings, nil
 }
 
-func (c *Client) DeleteDeviceSetting(deviceSettingID string) error {
-	err := c.Delete(deviceSettingEndpoint + "/" + deviceSettingID)
+func (c *Client) DeleteDeviceSettings(deviceSettingsID string) error {
+	err := c.Delete(deviceSettingsEndpoint + "/" + deviceSettingsID)
 	if err != nil {
 		return err
 	}

@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceDeviceSetting() *schema.Resource {
+func resourceDeviceSettings() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"description": &schema.Schema{
@@ -76,17 +76,17 @@ func resourceDeviceSetting() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Create: resourceDeviceSettingCreate,
-		Read:   resourceDeviceSettingRead,
-		Update: resourceDeviceSettingUpdate,
-		Delete: resourceDeviceSettingDelete,
+		Create: resourceDeviceSettingsCreate,
+		Read:   resourceDeviceSettingsRead,
+		Update: resourceDeviceSettingsUpdate,
+		Delete: resourceDeviceSettingsDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
 }
 
-func resourceDeviceSettingCreate(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
@@ -103,7 +103,7 @@ func resourceDeviceSettingCreate(d *schema.ResourceData, m interface{}) error {
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 
-	deviceSetting := DeviceSetting{
+	deviceSettings := DeviceSettings{
 		Name:                      name,
 		Description:               description,
 		DirectSSO:                 directSSO,
@@ -119,32 +119,32 @@ func resourceDeviceSettingCreate(d *schema.ResourceData, m interface{}) error {
 		ApplyToEntities:           applyToEntities,
 	}
 
-	var newDeviceSetting *DeviceSetting
-	newDeviceSetting, err := client.CreateDeviceSetting(&deviceSetting)
+	var newDeviceSettings *DeviceSettings
+	newDeviceSettings, err := client.CreateDeviceSettings(&deviceSettings)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newDeviceSetting.ID)
+	d.SetId(newDeviceSettings.ID)
 
-	err = deviceSettingToResource(d, newDeviceSetting)
+	err = deviceSettingsToResource(d, newDeviceSettings)
 	if err != nil {
 		return err
 	}
 
-	return resourceDeviceSettingRead(d, m)
+	return resourceDeviceSettingsRead(d, m)
 }
 
-func resourceDeviceSettingRead(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceSettingsRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	deviceSetting, err := client.GetDeviceSetting(d.Id())
+	deviceSettings, err := client.GetDeviceSettings(d.Id())
 	if err != nil {
 		d.SetId("")
 		return nil
 	}
 
-	err = deviceSettingToResource(d, deviceSetting)
+	err = deviceSettingsToResource(d, deviceSettings)
 	if err != nil {
 		return err
 	}
@@ -152,7 +152,7 @@ func resourceDeviceSettingRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceDeviceSettingUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
 	name := d.Get("name").(string)
@@ -169,7 +169,7 @@ func resourceDeviceSettingUpdate(d *schema.ResourceData, m interface{}) error {
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 
-	deviceSetting := DeviceSetting{
+	deviceSettings := DeviceSettings{
 		Name:                      name,
 		Description:               description,
 		DirectSSO:                 directSSO,
@@ -185,26 +185,26 @@ func resourceDeviceSettingUpdate(d *schema.ResourceData, m interface{}) error {
 		ApplyToEntities:           applyToEntities,
 	}
 
-	var updatedDeviceSetting *DeviceSetting
-	updatedDeviceSetting, err := client.UpdateDeviceSetting(d.Id(), &deviceSetting)
+	var updatedDeviceSettings *DeviceSettings
+	updatedDeviceSettings, err := client.UpdateDeviceSettings(d.Id(), &deviceSettings)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(updatedDeviceSetting.ID)
+	d.SetId(updatedDeviceSettings.ID)
 
-	err = deviceSettingToResource(d, updatedDeviceSetting)
+	err = deviceSettingsToResource(d, updatedDeviceSettings)
 	if err != nil {
 		return err
 	}
 
-	return resourceDeviceSettingRead(d, m)
+	return resourceDeviceSettingsRead(d, m)
 }
 
-func resourceDeviceSettingDelete(d *schema.ResourceData, m interface{}) error {
+func resourceDeviceSettingsDelete(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	err := client.DeleteDeviceSetting(d.Id())
+	err := client.DeleteDeviceSettings(d.Id())
 	if err != nil {
 		return err
 	}
@@ -212,7 +212,7 @@ func resourceDeviceSettingDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func deviceSettingToResource(d *schema.ResourceData, m *DeviceSetting) error {
+func deviceSettingsToResource(d *schema.ResourceData, m *DeviceSettings) error {
 	d.Set("description", m.Description)
 	d.Set("name", m.Name)
 	d.Set("direct_sso", m.DirectSSO)
