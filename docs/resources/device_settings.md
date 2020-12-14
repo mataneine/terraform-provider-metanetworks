@@ -1,18 +1,18 @@
 ---
 layout: "metanetworks"
-page_title: "Meta Networks: metanetworks_device_setting"
+page_title: "Meta Networks: metanetworks_device_settings"
 description: |-
-  Provides a device setting resource.
+  Provides a device settings resource.
 ---
 
-# Resource: metanetworks_device_setting
+# Resource: metanetworks_device_settings
 
-Provides a device setting resource.
+Provides a device settings resource.
 
 ## Example Usage
 
 ```hcl
-resource "metanetworks_metaport" "example" {
+resource "metanetworks_device_settings" "example" {
   name                  = "Default_Org_Device_Setting"
   description           = "Example Description"
   apply_on_org          = true
@@ -23,12 +23,12 @@ resource "metanetworks_metaport" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required). The name of the device setting.
-* `description` - (Optional). The description of the device setting.
+* `name` - (Required). The name of the device settings.
+* `description` - (Optional). The description of the device settings.
 * `direct_sso`	- (Optional). Auto-select SSO at login
 * `dns_server_type` - (Optional). Values: `OVERLAY`,`UNDERLAY`.
 * `enabled` - (Optional) default=true.
-* `apply_on_org` - (Optional; Required if `sources` is omitted). Applies setting to entire organization.
+* `apply_on_org` - (Optional; Required if `sources` is omitted). Applies settings to entire organization.
 * `vpn_login_browser` - (Optional). Type of login for VPN. Values: `AGENT`, `EXTERNAL`, `USER_DEFINED`.
 * `protocol_selection_lifetime` - (Optional). Specifies time in *minutes* that the protocol selection is valix. Max `525600` (1 year).
 * `search_domains` - (Optional). (Optional). Specify domains? 
