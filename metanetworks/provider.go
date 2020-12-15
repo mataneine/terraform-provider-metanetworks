@@ -55,7 +55,11 @@ func Provider() *schema.Provider {
 			"metanetworks_protocol_group":               resourceProtocolGroup(),
 			"metanetworks_routing_group_attachment":     resourceRoutingGroupAttachment(),
 			"metanetworks_routing_group":                resourceRoutingGroup(),
+<<<<<<< HEAD
 			"metanetworks_user_settings":                resourceUserSettings(),
+=======
+			"metanetworks_posture_check":                resourcePostureCheck(),
+>>>>>>> 9f110eb34e52e2e16738c711b2cfb469755e20fe
 		},
 	}
 
