@@ -52,6 +52,7 @@ func Provider() *schema.Provider {
 			"metanetworks_peering_attachment":           resourcePeeringAttachment(),
 			"metanetworks_peering":                      resourcePeering(),
 			"metanetworks_policy":                       resourcePolicy(),
+			"metanetworks_posture_check":                resourcePostureCheck(),
 			"metanetworks_protocol_group":               resourceProtocolGroup(),
 			"metanetworks_routing_group_attachment":     resourceRoutingGroupAttachment(),
 			"metanetworks_routing_group":                resourceRoutingGroup(),
