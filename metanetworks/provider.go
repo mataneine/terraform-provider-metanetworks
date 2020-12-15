@@ -52,14 +52,19 @@ func Provider() *schema.Provider {
 			"metanetworks_peering_attachment":           resourcePeeringAttachment(),
 			"metanetworks_peering":                      resourcePeering(),
 			"metanetworks_policy":                       resourcePolicy(),
+			"metanetworks_posture_check":                resourcePostureCheck(),
 			"metanetworks_protocol_group":               resourceProtocolGroup(),
 			"metanetworks_routing_group_attachment":     resourceRoutingGroupAttachment(),
 			"metanetworks_routing_group":                resourceRoutingGroup(),
+<<<<<<< HEAD
 <<<<<<< HEAD
 			"metanetworks_user_settings":                resourceUserSettings(),
 =======
 			"metanetworks_posture_check":                resourcePostureCheck(),
 >>>>>>> 9f110eb34e52e2e16738c711b2cfb469755e20fe
+=======
+			"metanetworks_user_settings":                resourceUserSettings(),
+>>>>>>> cb2b0a24deddb7514ac316c8540a802d2a1343bc
 		},
 	}
 
