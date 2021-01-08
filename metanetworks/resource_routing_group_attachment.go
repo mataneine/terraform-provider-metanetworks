@@ -2,6 +2,7 @@ package metanetworks
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -9,12 +10,12 @@ import (
 func resourceRoutingGroupAttachment() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"routing_group_id": &schema.Schema{
+			"routing_group_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"network_element_id": &schema.Schema{
+			"network_element_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -54,7 +55,7 @@ func resourceRoutingGroupAttachmentCreate(d *schema.ResourceData, m interface{})
 		return err
 	}
 
-	d.SetId(routingGroupID + elementID)
+	d.SetId(fmt.Sprintf("%s_%s", routingGroupID, elementID))
 
 	return resourceRoutingGroupAttachmentRead(d, m)
 }
@@ -109,7 +110,7 @@ func resourceRoutingGroupAttachmentDelete(d *schema.ResourceData, m interface{})
 	// Note that if the entry has already been deleted this won't fail.
 	for i := 0; i < len(routingGroup.MappedElements); i++ {
 		if routingGroup.MappedElements[i] == elementID {
-			routingGroup.MappedElements = append(routingGroup.MappedElements[i:], routingGroup.MappedElements[i+1:]...)
+			routingGroup.MappedElements = append(routingGroup.MappedElements[:i], routingGroup.MappedElements[i+1:]...)
 			break
 		}
 	}

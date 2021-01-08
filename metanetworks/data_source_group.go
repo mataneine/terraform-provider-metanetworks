@@ -1,74 +1,75 @@
 package metanetworks
 
 import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
+		ReadContext: dataSourceGroupRead,
 		Schema: map[string]*schema.Schema{
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"expression": &schema.Schema{
+			"expression": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"provisioned_by": &schema.Schema{
+			"provisioned_by": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"created_at": &schema.Schema{
+			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified_at": &schema.Schema{
+			"modified_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"org_id": &schema.Schema{
+			"org_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"members": &schema.Schema{
+			"roles": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"roles": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Computed: true,
-			},
-			"users": &schema.Schema{
+			"users": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
 		},
-		Read: dataSourceGroupRead,
 	}
 }
 
-func dataSourceGroupRead(d *schema.ResourceData, m interface{}) error {
+func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*Client)
+
+	// // Warning or errors can be collected in a slice type
+	var diags diag.Diagnostics
 
 	name := d.Get("name").(string)
 
 	var group []Group
 	group, err := client.GetGroups(name)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	err = groupToResource(d, &group[0])
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return nil
+	return diags
 }

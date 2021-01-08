@@ -4,16 +4,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourcePolicy() *schema.Resource {
+func resourceEgressRoute() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
 			},
 			"destinations": {
 				Type:     schema.TypeSet,
@@ -25,20 +21,23 @@ func resourcePolicy() *schema.Resource {
 				Default:  true,
 				Optional: true,
 			},
-			"protocol_groups": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-			},
 			"exempt_sources": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
+			"name": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"sources": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
+			},
+			"via": {
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"created_at": {
 				Type:     schema.TypeString,
@@ -53,63 +52,63 @@ func resourcePolicy() *schema.Resource {
 				Computed: true,
 			},
 		},
-		Create: resourcePolicyCreate,
-		Read:   resourcePolicyRead,
-		Update: resourcePolicyUpdate,
-		Delete: resourcePolicyDelete,
+		Create: resourceEgressRouteCreate,
+		Read:   resourceEgressRouteRead,
+		Update: resourceEgressRouteUpdate,
+		Delete: resourceEgressRouteDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 	}
 }
 
-func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
+func resourceEgressRouteCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	name := d.Get("name").(string)
 	description := d.Get("description").(string)
+	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
 	enabled := d.Get("enabled").(bool)
 	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
+	name := d.Get("name").(string)
 	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
-	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
-	protocolGroups := resourceTypeSetToStringSlice(d.Get("protocol_groups").(*schema.Set))
+	via := d.Get("via").(string)
 
-	policy := Policy{
-		Name:           name,
-		Description:    description,
-		Enabled:        enabled,
-		Destinations:   destinations,
-		ExemptSources:  exemptSources,
-		Sources:        sources,
-		ProtocolGroups: protocolGroups,
+	egressRoute := EgressRoute{
+		Description:   description,
+		Destinations:  destinations,
+		Enabled:       enabled,
+		ExemptSources: exemptSources,
+		Name:          name,
+		Sources:       sources,
+		Via:           via,
 	}
 
-	var newPolicy *Policy
-	newPolicy, err := client.CreatePolicy(&policy)
+	var newEgressRoute *EgressRoute
+	newEgressRoute, err := client.CreateEgressRoute(&egressRoute)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(newPolicy.ID)
+	d.SetId(newEgressRoute.ID)
 
-	err = policyToResource(d, newPolicy)
+	err = egressRouteToResource(d, newEgressRoute)
 	if err != nil {
 		return err
 	}
 
-	return resourcePolicyRead(d, m)
+	return resourceEgressRouteRead(d, m)
 }
 
-func resourcePolicyRead(d *schema.ResourceData, m interface{}) error {
+func resourceEgressRouteRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	policy, err := client.GetPolicy(d.Id())
+	egressRoute, err := client.GetEgressRoute(d.Id())
 	if err != nil {
 		d.SetId("")
 		return nil
 	}
 
-	err = policyToResource(d, policy)
+	err = egressRouteToResource(d, egressRoute)
 	if err != nil {
 		return err
 	}
@@ -117,47 +116,47 @@ func resourcePolicyRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourcePolicyUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceEgressRouteUpdate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	name := d.Get("name").(string)
 	description := d.Get("description").(string)
+	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
 	enabled := d.Get("enabled").(bool)
 	exemptSources := resourceTypeSetToStringSlice(d.Get("exempt_sources").(*schema.Set))
+	name := d.Get("name").(string)
 	sources := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
-	destinations := resourceTypeSetToStringSlice(d.Get("destinations").(*schema.Set))
-	protocolGroups := resourceTypeSetToStringSlice(d.Get("protocol_groups").(*schema.Set))
+	via := d.Get("via").(string)
 
-	policy := Policy{
-		Name:           name,
-		Description:    description,
-		Enabled:        enabled,
-		Destinations:   destinations,
-		ExemptSources:  exemptSources,
-		Sources:        sources,
-		ProtocolGroups: protocolGroups,
+	egressRoute := EgressRoute{
+		Description:   description,
+		Destinations:  destinations,
+		Enabled:       enabled,
+		ExemptSources: exemptSources,
+		Name:          name,
+		Sources:       sources,
+		Via:           via,
 	}
 
-	var updatedPolicy *Policy
-	updatedPolicy, err := client.UpdatePolicy(d.Id(), &policy)
+	var updatedEgressRoute *EgressRoute
+	updatedEgressRoute, err := client.UpdateEgressRoute(d.Id(), &egressRoute)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(updatedPolicy.ID)
+	d.SetId(updatedEgressRoute.ID)
 
-	err = policyToResource(d, updatedPolicy)
+	err = egressRouteToResource(d, updatedEgressRoute)
 	if err != nil {
 		return err
 	}
 
-	return resourcePolicyRead(d, m)
+	return resourceEgressRouteRead(d, m)
 }
 
-func resourcePolicyDelete(d *schema.ResourceData, m interface{}) error {
+func resourceEgressRouteDelete(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
-	err := client.DeletePolicy(d.Id())
+	err := client.DeleteEgressRoute(d.Id())
 	if err != nil {
 		return err
 	}
@@ -165,14 +164,14 @@ func resourcePolicyDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func policyToResource(d *schema.ResourceData, m *Policy) error {
+func egressRouteToResource(d *schema.ResourceData, m *EgressRoute) error {
 	d.Set("description", m.Description)
-	d.Set("name", m.Name)
 	d.Set("destinations", m.Destinations)
 	d.Set("enabled", m.Enabled)
-	d.Set("protocol_groups", m.ProtocolGroups)
 	d.Set("exempt_sources", m.ExemptSources)
+	d.Set("name", m.Name)
 	d.Set("sources", m.Sources)
+	d.Set("via", m.Via)
 	d.Set("created_at", m.CreatedAt)
 	d.Set("modified_at", m.ModifiedAt)
 	d.Set("org_id", m.OrgID)

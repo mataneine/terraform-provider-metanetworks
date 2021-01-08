@@ -7,18 +7,12 @@ import (
 func resourceMetaportOTAC() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"metaport_id": &schema.Schema{
+			"metaport_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"triggers": &schema.Schema{
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Required: true,
-				ForceNew: true,
-			},
-			"secret": &schema.Schema{
+			"secret": {
 				Type:      schema.TypeString,
 				Computed:  true,
 				Sensitive: true,
