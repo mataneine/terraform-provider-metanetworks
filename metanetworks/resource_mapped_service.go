@@ -7,57 +7,45 @@ import (
 func resourceMappedService() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"tags": &schema.Schema{
+			"mapped_service": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"tags": {
 				Type:     schema.TypeMap,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
-			"created_at": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"dns_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"expires_at": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"modified_at": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"org_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"mapped_service": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"aliases": &schema.Schema{
+			"aliases": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"net_id": &schema.Schema{
+			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"type": &schema.Schema{
+			"dns_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"version": &schema.Schema{
+			"expires_at": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"modified_at": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"org_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

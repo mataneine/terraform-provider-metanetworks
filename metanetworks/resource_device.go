@@ -81,7 +81,7 @@ func resourceDeviceCreate(d *schema.ResourceData, m interface{}) error {
 	networkElement := NetworkElement{
 		Name:        name,
 		Description: description,
-		Enabled:     enabled,
+		Enabled:     &enabled,
 		OwnerID:     ownerID,
 		Platform:    platform,
 	}
@@ -134,7 +134,7 @@ func resourceDeviceUpdate(d *schema.ResourceData, m interface{}) error {
 	networkElement := NetworkElement{
 		Name:        name,
 		Description: description,
-		Enabled:     enabled,
+		Enabled:     &enabled,
 		OwnerID:     ownerID,
 		Platform:    platform,
 	}

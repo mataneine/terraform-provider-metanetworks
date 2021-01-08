@@ -71,7 +71,7 @@ func resourceNativeServiceCreate(d *schema.ResourceData, m interface{}) error {
 	networkElement := NetworkElement{
 		Name:        name,
 		Description: description,
-		Enabled:     enabled,
+		Enabled:     &enabled,
 	}
 	var newNativeService *NetworkElement
 	newNativeService, err := client.CreateNetworkElement(&networkElement)
@@ -120,7 +120,7 @@ func resourceNativeServiceUpdate(d *schema.ResourceData, m interface{}) error {
 	networkElement := NetworkElement{
 		Name:        name,
 		Description: description,
-		Enabled:     enabled,
+		Enabled:     &enabled,
 	}
 	var updatedNativeService *NetworkElement
 	updatedNativeService, err := client.UpdateNetworkElement(d.Id(), &networkElement)

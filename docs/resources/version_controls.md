@@ -2,29 +2,30 @@
 layout: "metanetworks"
 page_title: "Meta Networks: metanetworks_version_controls"
 description: |-
-  Provides a version controls resource.
+  Provides a posture check resource.
 ---
 
 # Resource: metanetworks_version_controls
 
-  Provides a version controls resource.
+Provides a version controls resource.
 
 ## Example Usage
 
 ```hcl
 resource "metanetworks_version_controls" "example" {
-  name                  = "Default_Org_Device_Setting"
-  description           = "Example Description"
-  apply_on_org          = true
+  name         = "Example"
+  description  = "Example"
+  enabled      = true
+  apply_to_org = true
   windows_policy = {
-      mode = "latest_beta"
+    mode = "lastest_stable"
   }
   macos_policy = {
-      mode = "latest_stable"
+    mode = "lastet_beta"
   }
   linux_policy = {
-      mode = "specific_version"
-      version = "3.7.6"
+    mode = "specific_version"
+    version = "3.7.7"
   }
 }
 ```
@@ -33,17 +34,17 @@ resource "metanetworks_version_controls" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required). The name of the device setting.
-* `description` - (Optional). The description of the device setting.
-* `enabled` - (Optional) default=true.
-* `apply_on_org` - (Optional; Required if `apply_to_entities` is omitted). Indicates whether this version control applies to the org. Note: this attribute overrides apply_to_entities.
-* `apply_to_entities` - (Optional) - List of entities (`sources`) which will use this version control
-* `exempt_entities` - (Optional) - Sources to exclude from version controls policy
-* `windows_policy` (Optional) - Required if `mode` parameter is used.
-* `macos_policy` (Optional) - Required if `mode` parameter is used.
-* `linux_policy` (Optional) - Required if `mode` parameter is used.
-* `mode` - (Optional) - `"disable" "specific_version" "latest_stable" "latest_beta"`
-* `version` - (Optional): Required only if `mode` = `"specific_version"`
+* `name` - (Required): The name of the posture check.
+* `description` - (Optional): The description of the version control profile.
+* `enabled` - (Optional): default=true.
+* `apply_on_org` - (Optional: default=true. Required if `sources` is omitted). Applies setting to entire organization. Note: this attribute overrides apply_to_entities
+* `apply_to_entities` - (Optional: List of entities which will use this version control
+* `exempt_entities` - (Optional): List of entities `sources` to exclude from version control profile.
+* `linux_policy` - (Optional): Apply version control to Linux operating system.
+* `macos_policy` - (Optional): Apply version control to macOS operating system.
+* `windows_policy` - (Optional): Apply version control to Windows operating system.
+* `mode` - (Optional): The OS policy mode `"disable" "specific_version" "latest_stable" "latest_beta"`
+* `version` - (Required): Required if `mode = specific_version`
 
 ## Attributes Reference
 
