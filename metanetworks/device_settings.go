@@ -9,6 +9,7 @@ const (
 	deviceSettingsEndpoint string = "/v1/settings/device"
 )
 
+// DeviceSettings ..
 type DeviceSettings struct {
 	Name                      string   `json:"name"`
 	Description               string   `json:"description,omitempty"`
@@ -17,17 +18,18 @@ type DeviceSettings struct {
 	DNSServerType             string   `json:"dns_server_type,omitempty"`
 	Enabled                   bool     `json:"enabled" type:"bool"`
 	ApplyOnOrg                bool     `json:"apply_on_org,omitempty"`
+	ApplyToEntities           []string `json:"apply_to_entities,omitempty"`
 	SplitTunnel               bool     `json:"split_tunnel,omitempty" type:"bool"`
 	ProtocolSelectionLifetime int      `json:"protocol_selection_lifetime,omitempty"`
 	SessionLifetime           int      `json:"session_lifetime,omitempty"`
 	SessionLifetimeGrace      int      `json:"session_lifetime_grace,omitempty"`
 	SearchDomains             []string `json:"search_domains,omitempty"`
-	ApplyToEntities           []string `json:"apply_to_entities,omitempty"`
 	CreatedAt                 string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID                        string   `json:"id,omitempty" meta_api:"read_only"`
 	ModifiedAt                string   `json:"modified_at,omitempty" meta_api:"read_only"`
 }
 
+// GetDeviceSettings ..
 func (c *Client) GetDeviceSettings(deviceSettingsID string) (*DeviceSettings, error) {
 	var deviceSettings DeviceSettings
 	err := c.Read(deviceSettingsEndpoint+"/"+deviceSettingsID, &deviceSettings)
@@ -39,6 +41,7 @@ func (c *Client) GetDeviceSettings(deviceSettingsID string) (*DeviceSettings, er
 	return &deviceSettings, nil
 }
 
+// UpdateDeviceSettings ..
 func (c *Client) UpdateDeviceSettings(deviceSettingsID string, deviceSettings *DeviceSettings) (*DeviceSettings, error) {
 	resp, err := c.Update(deviceSettingsEndpoint+"/"+deviceSettingsID, *deviceSettings)
 	if err != nil {
@@ -50,6 +53,7 @@ func (c *Client) UpdateDeviceSettings(deviceSettingsID string, deviceSettings *D
 	return updatedDeviceSettings, nil
 }
 
+// CreateDeviceSettings ..
 func (c *Client) CreateDeviceSettings(deviceSettings *DeviceSettings) (*DeviceSettings, error) {
 	resp, err := c.Create(deviceSettingsEndpoint, *deviceSettings)
 	if err != nil {
@@ -65,6 +69,7 @@ func (c *Client) CreateDeviceSettings(deviceSettings *DeviceSettings) (*DeviceSe
 	return createdDeviceSettings, nil
 }
 
+// DeleteDeviceSettings..
 func (c *Client) DeleteDeviceSettings(deviceSettingsID string) error {
 	err := c.Delete(deviceSettingsEndpoint + "/" + deviceSettingsID)
 	if err != nil {

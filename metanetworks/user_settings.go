@@ -9,13 +9,14 @@ const (
 	userSettingsEndpoint string = "/v1/settings/auth"
 )
 
+// UserSettings ..
 type UserSettings struct {
 	Description             string   `json:"description"`
 	AllowedFactors          []string `json:"allowed_factors,omitempty"`
-	ApplyToEntities         []string `json:"apply_to_entities,omitempty"`
 	ProhibitedOS            []string `json:"prohibited_os,omitempty"`
 	Enabled                 bool     `json:"enabled" type:"bool"`
 	ApplyOnOrg              bool     `json:"apply_on_org,omitempty"`
+	ApplyToEntities         []string `json:"apply_to_entities,omitempty"`
 	MFARequired             bool     `json:"mfa_required,omitempty"`
 	OverlayMFARequired      bool     `json:"overlay_mfa_required,omitempty"`
 	SSOMandatory            bool     `json:"sso_mandatory,omitempty"`
@@ -28,6 +29,7 @@ type UserSettings struct {
 	ModifiedAt              string   `json:"modified_at,omitempty" meta_api:"read_only"`
 }
 
+// GetUserSettings ..
 func (c *Client) GetUserSettings(userSettingsID string) (*UserSettings, error) {
 	var userSettings UserSettings
 	err := c.Read(userSettingsEndpoint+"/"+userSettingsID, &userSettings)
@@ -39,6 +41,7 @@ func (c *Client) GetUserSettings(userSettingsID string) (*UserSettings, error) {
 	return &userSettings, nil
 }
 
+// UpdateUserSettings //
 func (c *Client) UpdateUserSettings(userSettingsID string, userSettings *UserSettings) (*UserSettings, error) {
 	resp, err := c.Update(userSettingsEndpoint+"/"+userSettingsID, *userSettings)
 	if err != nil {
@@ -50,6 +53,7 @@ func (c *Client) UpdateUserSettings(userSettingsID string, userSettings *UserSet
 	return updatedUserSettings, nil
 }
 
+// CreateUserSettings //
 func (c *Client) CreateUserSettings(userSettings *UserSettings) (*UserSettings, error) {
 	resp, err := c.Create(userSettingsEndpoint, *userSettings)
 	if err != nil {
@@ -65,6 +69,7 @@ func (c *Client) CreateUserSettings(userSettings *UserSettings) (*UserSettings, 
 	return createdUserSettings, nil
 }
 
+// DeleteUserSettings //
 func (c *Client) DeleteUserSettings(userSettingsID string) error {
 	err := c.Delete(userSettingsEndpoint + "/" + userSettingsID)
 	if err != nil {
