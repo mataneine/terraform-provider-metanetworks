@@ -42,7 +42,7 @@ func resourceUserSettings() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"apply_to_entities": &schema.Schema{
+			"sources": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -101,7 +101,7 @@ func resourceUserSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	overlayMFARefreshPeriod := d.Get("overlay_mfa_refresh_period").(int)
 	passwordExpiration := d.Get("password_expiration").(int)
 	allowedFactors := resourceTypeSetToStringSlice(d.Get("allowed_factors").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	prohibitedOS := resourceTypeSetToStringSlice(d.Get("prohibited_os").(*schema.Set))
 
 	userSettings := UserSettings{
@@ -167,7 +167,7 @@ func resourceUserSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	overlayMFARefreshPeriod := d.Get("overlay_mfa_refresh_period").(int)
 	passwordExpiration := d.Get("password_expiration").(int)
 	allowedFactors := resourceTypeSetToStringSlice(d.Get("allowed_factors").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 	prohibitedOS := resourceTypeSetToStringSlice(d.Get("prohibited_os").(*schema.Set))
 
 	userSettings := UserSettings{

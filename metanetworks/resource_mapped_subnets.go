@@ -40,6 +40,22 @@ func resourceMappedSubnets() *schema.Resource {
 				},
 				Computed: true,
 			},
+			"mapped_hosts": {
+				Type: schema.TypeList,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"mapped_host": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+				Computed: true,
+			},
 			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -174,6 +190,10 @@ func mappedSubnetsToResource(d *schema.ResourceData, m *NetworkElement) error {
 	if err != nil {
 		return err
 	}
+	err2 := d.Set("mapped_hosts", flattenMappedHosts(m.MappedHosts))
+	if err2 != nil {
+		return err2
+	}
 	d.Set("created_at", m.CreatedAt)
 	d.Set("dns_name", m.DNSName)
 	d.Set("expires_at", m.ExpiresAt)
@@ -191,6 +211,17 @@ func flattenMappedDomains(in []MappedDomain) []map[string]interface{} {
 		m := make(map[string]interface{})
 		m["enterprise_dns"] = v.EnterpriseDNS
 		m["mapped_domain"] = v.MappedDomain
+		m["name"] = v.Name
+		out[i] = m
+	}
+	return out
+}
+
+func flattenMappedHosts(in []MappedHost) []map[string]interface{} {
+	var out = make([]map[string]interface{}, len(in), len(in))
+	for i, v := range in {
+		m := make(map[string]interface{})
+		m["mapped_host"] = v.MappedHost
 		m["name"] = v.Name
 		out[i] = m
 	}

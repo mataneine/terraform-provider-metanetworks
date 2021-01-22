@@ -53,7 +53,7 @@ func resourceDeviceSettings() *schema.Resource {
 				Default:  true,
 				Optional: true,
 			},
-			"apply_to_entities": &schema.Schema{
+			"sources": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -101,7 +101,7 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	sessionLifetime := d.Get("session_lifetime").(int)
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 
 	deviceSettings := DeviceSettings{
 		Name:                      name,
@@ -167,7 +167,7 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	sessionLifetime := d.Get("session_lifetime").(int)
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
-	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
 
 	deviceSettings := DeviceSettings{
 		Name:                      name,

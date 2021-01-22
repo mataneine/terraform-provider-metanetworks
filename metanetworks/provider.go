@@ -43,6 +43,7 @@ func Provider() *schema.Provider {
 			"metanetworks_mapped_service_alias":         resourceMappedServiceAlias(),
 			"metanetworks_mapped_service":               resourceMappedService(),
 			"metanetworks_mapped_subnets_mapped_domain": resourceMappedSubnetsMappedDomain(),
+			"metanetworks_mapped_subnets_mapped_host":   resourceMappedSubnetsMappedHost(),
 			"metanetworks_mapped_subnets":               resourceMappedSubnets(),
 			"metanetworks_metaport_attachment":          resourceMetaportAttachment(),
 			"metanetworks_metaport_otac":                resourceMetaportOTAC(),
