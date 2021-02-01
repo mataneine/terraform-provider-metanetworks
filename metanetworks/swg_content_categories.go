@@ -28,9 +28,9 @@ type SwgContentCategories struct {
 }
 
 // GetSwgContentCategories ...
-func (c *Client) GetSwgContentCategories(elementID string) (*SwgContentCategories, error) {
+func (c *Client) GetSwgContentCategories(swgContentCategoriesID string) (*SwgContentCategories, error) {
 	var SwgContentCategories SwgContentCategories
-	err := c.Read(swgContentCategoriesEndpoint+"/"+elementID, &SwgContentCategories)
+	err := c.Read(swgContentCategoriesEndpoint+"/"+swgContentCategoriesID+"?expand=true", &SwgContentCategories)
 	if err != nil {
 		return nil, err
 	}
