@@ -23,7 +23,7 @@ type NetworkElement struct {
 	ExpiresAt     string         `json:"expires_at,omitempty" meta_api:"read_only"`
 	ID            string         `json:"id,omitempty" meta_api:"read_only"`
 	MappedService string         `json:"mapped_service,omitempty"`
-	MappedSubnets []string       `json:"mapped_subnets,omitempty"`
+	MappedSubnets []string       `json:"mapped_subnets"`
 	ModifiedAt    string         `json:"modified_at,omitempty" meta_api:"read_only"`
 	Name          string         `json:"name"`
 	NetID         int64          `json:"net_id,omitempty" meta_api:"read_only"`
@@ -32,6 +32,7 @@ type NetworkElement struct {
 	Platform      string         `json:"platform,omitempty"`
 	Type          string         `json:"type,omitempty" meta_api:"read_only"`
 	MappedDomains []MappedDomain `json:"mapped_domains,omitempty"`
+	MappedHosts   []MappedHost   `json:"mapped_hosts,omitempty"`
 }
 
 // GetNetworkElement ...
@@ -127,6 +128,26 @@ func (c *Client) SetNetworkElementMappedDomains(networkElementID string, name st
 // DeleteNetworkElementMappedDomains ...
 func (c *Client) DeleteNetworkElementMappedDomains(networkElementID string, name string) error {
 	err := c.Delete(networkElementsEndpoint + "/" + networkElementID + "/mapped_domains/" + name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) SetNetworkElementMappedHosts(networkElementID string, name string, mappedHost *MappedHost) (*MappedHost, error) {
+	resp, err := c.SetMappedHost(networkElementsEndpoint+"/"+networkElementID+"/mapped_hosts/"+name, *mappedHost)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("Returning Network Element Mapped Hosts from Create: %s", resp.Name)
+	return resp, nil
+}
+
+// DeleteNetworkElementMappedDomains ...
+func (c *Client) DeleteNetworkElementMappedHosts(networkElementID string, name string) error {
+	err := c.Delete(networkElementsEndpoint + "/" + networkElementID + "/mapped_hosts/" + name)
 	if err != nil {
 		return err
 	}

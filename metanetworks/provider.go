@@ -43,6 +43,7 @@ func Provider() *schema.Provider {
 			"metanetworks_mapped_service_alias":         resourceMappedServiceAlias(),
 			"metanetworks_mapped_service":               resourceMappedService(),
 			"metanetworks_mapped_subnets_mapped_domain": resourceMappedSubnetsMappedDomain(),
+			"metanetworks_mapped_subnets_mapped_host":   resourceMappedSubnetsMappedHost(),
 			"metanetworks_mapped_subnets":               resourceMappedSubnets(),
 			"metanetworks_metaport_attachment":          resourceMetaportAttachment(),
 			"metanetworks_metaport_otac":                resourceMetaportOTAC(),
@@ -56,6 +57,12 @@ func Provider() *schema.Provider {
 			"metanetworks_routing_group_attachment":     resourceRoutingGroupAttachment(),
 			"metanetworks_routing_group":                resourceRoutingGroup(),
 			"metanetworks_posture_check":                resourcePostureCheck(),
+			"metanetworks_device_settings":              resourceDeviceSettings(),
+			"metanetworks_user_settings":                resourceUserSettings(),
+			"metanetworks_version_controls":             resourceVersionControls(),
+			"metanetworks_swg_threat_categories":        resourceSwgThreatCategories(),
+			"metanetworks_swg_content_categories":       resourceSwgContentCategories(),
+			"metanetworks_swg_url_filtering_rules":      resourceSwgUrlFilteringRules(),
 		},
 	}
 
