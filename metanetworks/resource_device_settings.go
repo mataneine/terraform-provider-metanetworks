@@ -48,12 +48,21 @@ func resourceDeviceSettings() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
+			"block_lan_access": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"apply_on_org": &schema.Schema{
 				Type:     schema.TypeBool,
 				Default:  true,
 				Optional: true,
 			},
 			"apply_to_entities": &schema.Schema{
+				Type:     schema.TypeSet,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
+			"auto_fqdn_domain_names": &schema.Schema{
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
@@ -95,6 +104,7 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	dnsServerType := d.Get("dns_server_type").(string)
 	vpnLoginBrowser := d.Get("vpn_login_browser").(string)
 	enabled := d.Get("enabled").(bool)
+	blocklanaccess := d.Get("block_lan_access").(bool)
 	applyOnOrg := d.Get("apply_on_org").(bool)
 	splitTunnel := d.Get("split_tunnel").(bool)
 	protocolSelectionLifetime := d.Get("protocol_selection_lifetime").(int)
@@ -102,6 +112,7 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	autoFQDNDomainNames := resourceTypeSetToStringSlice(d.Get("auto_fqdn_domain_names").(*schema.Set))
 
 	deviceSettings := DeviceSettings{
 		Name:                      name,
@@ -110,6 +121,7 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 		DNSServerType:             dnsServerType,
 		VPNLoginBrowser:           vpnLoginBrowser,
 		Enabled:                   enabled,
+		BlockLanAccess:            blocklanaccess,
 		ApplyOnOrg:                applyOnOrg,
 		SplitTunnel:               splitTunnel,
 		ProtocolSelectionLifetime: protocolSelectionLifetime,
@@ -117,6 +129,7 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 		SessionLifetimeGrace:      sessionLifetimeGrace,
 		SearchDomains:             searchDomains,
 		ApplyToEntities:           applyToEntities,
+		AutoFQDNDomainNames:       autoFQDNDomainNames,
 	}
 
 	var newDeviceSettings *DeviceSettings
@@ -161,6 +174,7 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	dnsServerType := d.Get("dns_server_type").(string)
 	vpnLoginBrowser := d.Get("vpn_login_browser").(string)
 	enabled := d.Get("enabled").(bool)
+	blocklanaccess := d.Get("block_lan_access").(bool)
 	applyOnOrg := d.Get("apply_on_org").(bool)
 	splitTunnel := d.Get("split_tunnel").(bool)
 	protocolSelectionLifetime := d.Get("protocol_selection_lifetime").(int)
@@ -168,6 +182,7 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("apply_to_entities").(*schema.Set))
+	autoFQDNDomainNames := resourceTypeSetToStringSlice(d.Get("auto_fqdn_domain_names").(*schema.Set))
 
 	deviceSettings := DeviceSettings{
 		Name:                      name,
@@ -176,6 +191,7 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 		DNSServerType:             dnsServerType,
 		VPNLoginBrowser:           vpnLoginBrowser,
 		Enabled:                   enabled,
+		BlockLanAccess:            blocklanaccess,
 		ApplyOnOrg:                applyOnOrg,
 		SplitTunnel:               splitTunnel,
 		ProtocolSelectionLifetime: protocolSelectionLifetime,
@@ -183,6 +199,7 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 		SessionLifetimeGrace:      sessionLifetimeGrace,
 		SearchDomains:             searchDomains,
 		ApplyToEntities:           applyToEntities,
+		AutoFQDNDomainNames:       autoFQDNDomainNames,
 	}
 
 	var updatedDeviceSettings *DeviceSettings
@@ -219,6 +236,7 @@ func deviceSettingsToResource(d *schema.ResourceData, m *DeviceSettings) error {
 	d.Set("dns_server_type", m.DNSServerType)
 	d.Set("vpn_login_browser", m.VPNLoginBrowser)
 	d.Set("enabled", m.Enabled)
+	d.Set("block_lan_access", m.BlockLanAccess)
 	d.Set("apply_on_org", m.ApplyOnOrg)
 	d.Set("split_tunnel", m.SplitTunnel)
 	d.Set("protocol_selection_lifetime", m.ProtocolSelectionLifetime)
@@ -226,6 +244,7 @@ func deviceSettingsToResource(d *schema.ResourceData, m *DeviceSettings) error {
 	d.Set("session_lifetime_grace", m.SessionLifetimeGrace)
 	d.Set("search_domains", m.SearchDomains)
 	d.Set("apply_to_entities", m.ApplyToEntities)
+	d.Set("auto_fqdn_domain_names", m.AutoFQDNDomainNames)
 	d.Set("created_at", m.CreatedAt)
 	d.Set("modified_at", m.ModifiedAt)
 

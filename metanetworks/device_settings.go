@@ -19,7 +19,9 @@ type DeviceSettings struct {
 	Enabled                   bool     `json:"enabled" type:"bool"`
 	ApplyOnOrg                bool     `json:"apply_on_org,omitempty"`
 	ApplyToEntities           []string `json:"apply_to_entities,omitempty"`
+	AutoFQDNDomainNames       []string `json:"auto_fqdn_domain_names,omitempty"`
 	SplitTunnel               bool     `json:"split_tunnel,omitempty" type:"bool"`
+	BlockLanAccess            bool     `json:"block_lan_access,omitempty" type:"bool"`
 	ProtocolSelectionLifetime int      `json:"protocol_selection_lifetime,omitempty"`
 	SessionLifetime           int      `json:"session_lifetime,omitempty"`
 	SessionLifetimeGrace      int      `json:"session_lifetime_grace,omitempty"`
@@ -69,7 +71,7 @@ func (c *Client) CreateDeviceSettings(deviceSettings *DeviceSettings) (*DeviceSe
 	return createdDeviceSettings, nil
 }
 
-// DeleteDeviceSettings..
+// DeleteDeviceSettings ..
 func (c *Client) DeleteDeviceSettings(deviceSettingsID string) error {
 	err := c.Delete(deviceSettingsEndpoint + "/" + deviceSettingsID)
 	if err != nil {
