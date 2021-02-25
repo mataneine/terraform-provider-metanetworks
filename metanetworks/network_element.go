@@ -32,7 +32,6 @@ type NetworkElement struct {
 	Platform      string         `json:"platform,omitempty"`
 	Type          string         `json:"type,omitempty" meta_api:"read_only"`
 	MappedDomains []MappedDomain `json:"mapped_domains,omitempty"`
-	MappedHosts   []MappedHost   `json:"mapped_hosts,omitempty"`
 }
 
 // GetNetworkElement ...
