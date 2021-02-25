@@ -19,7 +19,7 @@ type PostureCheck struct {
 	Enabled           bool          `json:"enabled" type:"bool"`
 	ApplyToOrg        bool          `json:"apply_to_org,omitempty"`
 	Interval          int           `json:"interval,omitempty"`
-	Check             []interface{} `json:"allowed_factors,omitempty"`
+	Check             []interface{} `json:"check,omitempty"`
 	When              []string      `json:"when"`
 	ExemptEntities    []string      `json:"exempt_entities,omitempty"`
 	ApplyToEntities   []string      `json:"apply_to_entities,omitempty"`
@@ -35,7 +35,7 @@ func (c *Client) GetPostureCheck(postureCheckID string) (*PostureCheck, error) {
 		return nil, err
 	}
 
-	log.Printf("Returning Auth Setting from Get: %s", postureCheck.ID)
+	log.Printf("Returning Posture Check from Get: %s", postureCheck.ID)
 	return &postureCheck, nil
 }
 
@@ -46,7 +46,7 @@ func (c *Client) UpdatePostureCheck(postureCheckID string, postureCheck *Posture
 	}
 	updatedPostureCheck, _ := resp.(*PostureCheck)
 
-	log.Printf("Returning Auth Setting from Update: %s", updatedPostureCheck.ID)
+	log.Printf("Returning Posture Check from Update: %s", updatedPostureCheck.ID)
 	return updatedPostureCheck, nil
 }
 
@@ -58,10 +58,10 @@ func (c *Client) CreatePostureCheck(postureCheck *PostureCheck) (*PostureCheck, 
 
 	createdPostureCheck, ok := resp.(*PostureCheck)
 	if !ok {
-		return nil, errors.New("Object returned from API was not a Auth Setting Pointer")
+		return nil, errors.New("Object returned from API was not a Posture Check Pointer")
 	}
 
-	log.Printf("Returning Auth Setting from Create: %s", createdPostureCheck.ID)
+	log.Printf("Returning Posture Check from Create: %s", createdPostureCheck.ID)
 	return createdPostureCheck, nil
 }
 
