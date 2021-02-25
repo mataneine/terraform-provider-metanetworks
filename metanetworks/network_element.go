@@ -134,26 +134,6 @@ func (c *Client) DeleteNetworkElementMappedDomains(networkElementID string, name
 	return nil
 }
 
-func (c *Client) SetNetworkElementMappedHosts(networkElementID string, name string, mappedHost *MappedHost) (*MappedHost, error) {
-	resp, err := c.SetMappedHost(networkElementsEndpoint+"/"+networkElementID+"/mapped_hosts/"+name, *mappedHost)
-	if err != nil {
-		return nil, err
-	}
-
-	log.Printf("Returning Network Element Mapped Hosts from Create: %s", resp.Name)
-	return resp, nil
-}
-
-// DeleteNetworkElementMappedDomains ...
-func (c *Client) DeleteNetworkElementMappedHosts(networkElementID string, name string) error {
-	err := c.Delete(networkElementsEndpoint + "/" + networkElementID + "/mapped_hosts/" + name)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // SetNetworkElementTags ...
 func (c *Client) SetNetworkElementTags(d *schema.ResourceData) error {
 	if d.HasChange("tags") {
