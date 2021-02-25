@@ -23,7 +23,7 @@ type NetworkElement struct {
 	ExpiresAt     string         `json:"expires_at,omitempty" meta_api:"read_only"`
 	ID            string         `json:"id,omitempty" meta_api:"read_only"`
 	MappedService string         `json:"mapped_service,omitempty"`
-	MappedSubnets []string       `json:"mapped_subnets"`
+	MappedSubnets []string       `json:"mapped_subnets,omitempty"`
 	ModifiedAt    string         `json:"modified_at,omitempty" meta_api:"read_only"`
 	Name          string         `json:"name"`
 	NetID         int64          `json:"net_id,omitempty" meta_api:"read_only"`
