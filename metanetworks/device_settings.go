@@ -26,6 +26,10 @@ type DeviceSettings struct {
 	CreatedAt                 string   `json:"created_at,omitempty" meta_api:"read_only"`
 	ID                        string   `json:"id,omitempty" meta_api:"read_only"`
 	ModifiedAt                string   `json:"modified_at,omitempty" meta_api:"read_only"`
+	BlockLanAccess            bool     `json:"block_lan_access" type:"bool"`
+	SWGAlwaysOn               bool     `json:"proxy_always_on" type:"bool"`
+	ZTNAAlwaysOn              bool     `json:"ztna_always_on" type:"bool"`
+	SessionExpiredAction      string   `json:"session_expired_action"`
 }
 
 func (c *Client) GetDeviceSettings(deviceSettingsID string) (*DeviceSettings, error) {

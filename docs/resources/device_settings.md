@@ -36,7 +36,10 @@ The following arguments are supported:
 * `session_lifetime` - (Optional). Time in *minutes* before requiring reauthentication.
 * `session_lifetime_grace` - (Optional). Time in *minutes* prior to session expiration to request reauthentication. Max: `60` (1 hour).
 * `split_tunnel` - (Optional). Setting to `true` will route all traffic (including internet bound) through Meta. Requires a Default Route mapped_subnet, metaport and egress resources.
-
+* `block_lan_access` - (Optional, default=false). Block local network access on the device
+* `swg_always_on` - (Optional, default=false). Proxy connection on the device can't be disabled (SWG)
+* `ztna_always_on` - (Optional, default=false). ZTNA connection on the device can't be disabled (Meta)
+* `session_expired_action` - (optional, default="DISCONNECT"). The action once the session expires. One of ["REQUIRE_REAUTH", "DISCONNECT"]
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:

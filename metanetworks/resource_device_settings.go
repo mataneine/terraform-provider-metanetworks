@@ -75,6 +75,26 @@ func resourceDeviceSettings() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"block_lan_access": &schema.Schema{
+				Type:     schema.TypeBool,
+				Default:  true,
+				Optional: true,
+			},
+			"swg_always_on": &schema.Schema{
+				Type:     schema.TypeBool,
+				Default:  false,
+				Optional: true,
+			},
+			"ztna_always_on": &schema.Schema{
+				Type:     schema.TypeBool,
+				Default:  false,
+				Optional: true,
+			},
+			"session_expired_action": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+				Default:  "DISCONNECT",
+			},
 		},
 		Create: resourceDeviceSettingsCreate,
 		Read:   resourceDeviceSettingsRead,
@@ -86,6 +106,10 @@ func resourceDeviceSettings() *schema.Resource {
 	}
 }
 
+// block_lan_access bool BlockLanAccess
+// proxy_always_on bool SWGAlwaysOn
+// session_expired_action [REQUIRE_REAUTH,DISCONNECT] SessionExpiredAction
+// ztna_always_on bool ZTNAAlwaysOn
 func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	client := m.(*Client)
 
@@ -102,6 +126,10 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
+	blockLanAccess := d.Get("block_lan_access").(bool)
+	swgAlwaysOn := d.Get("swg_always_on").(bool)
+	ztnaAlwaysOn := d.Get("ztna_always_on").(bool)
+	sessionExpiredAction := d.Get("session_expired_action").(string)
 
 	deviceSettings := DeviceSettings{
 		Name:                      name,
@@ -117,6 +145,10 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 		SessionLifetimeGrace:      sessionLifetimeGrace,
 		SearchDomains:             searchDomains,
 		ApplyToEntities:           applyToEntities,
+		BlockLanAccess:            blockLanAccess,
+		SWGAlwaysOn:               swgAlwaysOn,
+		ZTNAAlwaysOn:              ztnaAlwaysOn,
+		SessionExpiredAction:      sessionExpiredAction,
 	}
 
 	var newDeviceSettings *DeviceSettings
@@ -168,6 +200,10 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
 	searchDomains := resourceTypeSetToStringSlice(d.Get("search_domains").(*schema.Set))
 	applyToEntities := resourceTypeSetToStringSlice(d.Get("sources").(*schema.Set))
+	blockLanAccess := d.Get("block_lan_access").(bool)
+	swgAlwaysOn := d.Get("swg_always_on").(bool)
+	ztnaAlwaysOn := d.Get("ztna_always_on").(bool)
+	sessionExpiredAction := d.Get("session_expired_action").(string)
 
 	deviceSettings := DeviceSettings{
 		Name:                      name,
@@ -183,6 +219,10 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 		SessionLifetimeGrace:      sessionLifetimeGrace,
 		SearchDomains:             searchDomains,
 		ApplyToEntities:           applyToEntities,
+		BlockLanAccess:            blockLanAccess,
+		SWGAlwaysOn:               swgAlwaysOn,
+		ZTNAAlwaysOn:              ztnaAlwaysOn,
+		SessionExpiredAction:      sessionExpiredAction,
 	}
 
 	var updatedDeviceSettings *DeviceSettings
@@ -228,6 +268,10 @@ func deviceSettingsToResource(d *schema.ResourceData, m *DeviceSettings) error {
 	d.Set("apply_to_entities", m.ApplyToEntities)
 	d.Set("created_at", m.CreatedAt)
 	d.Set("modified_at", m.ModifiedAt)
+	d.Set("block_lan_access", m.BlockLanAccess)
+	d.Set("swg_always_on", m.SWGAlwaysOn)
+	d.Set("ztna_always_on", m.ZTNAAlwaysOn)
+	d.Set("session_expired_action", m.SessionExpiredAction)
 
 	d.SetId(m.ID)
 
