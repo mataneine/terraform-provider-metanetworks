@@ -93,7 +93,7 @@ func resourceDeviceSettings() *schema.Resource {
 			},
 			"session_expired_action": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 				Default:  "DISCONNECT",
 			},
 		},
