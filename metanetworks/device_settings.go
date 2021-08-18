@@ -17,7 +17,7 @@ type DeviceSettings struct {
 	DNSServerType             string   `json:"dns_server_type,omitempty"`
 	Enabled                   bool     `json:"enabled" type:"bool"`
 	ApplyOnOrg                bool     `json:"apply_on_org,omitempty"`
-	SplitTunnel               bool     `json:"split_tunnel,omitempty" type:"bool"`
+	TunnelMode                string   `json:"tunnel_mode"`
 	ProtocolSelectionLifetime int      `json:"protocol_selection_lifetime,omitempty"`
 	SessionLifetime           int      `json:"session_lifetime,omitempty"`
 	SessionLifetimeGrace      int      `json:"session_lifetime_grace,omitempty"`

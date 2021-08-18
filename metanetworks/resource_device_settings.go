@@ -44,9 +44,10 @@ func resourceDeviceSettings() *schema.Resource {
 				Default:  true,
 				Optional: true,
 			},
-			"split_tunnel": &schema.Schema{
-				Type:     schema.TypeBool,
+			"tunnel_mode": &schema.Schema{
+				Type:     schema.TypeString,
 				Optional: true,
+				Default:  "split",
 			},
 			"apply_on_org": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -120,7 +121,7 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 	vpnLoginBrowser := d.Get("vpn_login_browser").(string)
 	enabled := d.Get("enabled").(bool)
 	applyOnOrg := d.Get("apply_on_org").(bool)
-	splitTunnel := d.Get("split_tunnel").(bool)
+	tunnelMode := d.Get("tunnel_mode").(string)
 	protocolSelectionLifetime := d.Get("protocol_selection_lifetime").(int)
 	sessionLifetime := d.Get("session_lifetime").(int)
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
@@ -139,7 +140,7 @@ func resourceDeviceSettingsCreate(d *schema.ResourceData, m interface{}) error {
 		VPNLoginBrowser:           vpnLoginBrowser,
 		Enabled:                   enabled,
 		ApplyOnOrg:                applyOnOrg,
-		SplitTunnel:               splitTunnel,
+		TunnelMode:                tunnelMode,
 		ProtocolSelectionLifetime: protocolSelectionLifetime,
 		SessionLifetime:           sessionLifetime,
 		SessionLifetimeGrace:      sessionLifetimeGrace,
@@ -194,7 +195,7 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 	vpnLoginBrowser := d.Get("vpn_login_browser").(string)
 	enabled := d.Get("enabled").(bool)
 	applyOnOrg := d.Get("apply_on_org").(bool)
-	splitTunnel := d.Get("split_tunnel").(bool)
+	tunnelMode := d.Get("tunnel_mode").(string)
 	protocolSelectionLifetime := d.Get("protocol_selection_lifetime").(int)
 	sessionLifetime := d.Get("session_lifetime").(int)
 	sessionLifetimeGrace := d.Get("session_lifetime_grace").(int)
@@ -213,7 +214,7 @@ func resourceDeviceSettingsUpdate(d *schema.ResourceData, m interface{}) error {
 		VPNLoginBrowser:           vpnLoginBrowser,
 		Enabled:                   enabled,
 		ApplyOnOrg:                applyOnOrg,
-		SplitTunnel:               splitTunnel,
+		TunnelMode:                tunnelMode,
 		ProtocolSelectionLifetime: protocolSelectionLifetime,
 		SessionLifetime:           sessionLifetime,
 		SessionLifetimeGrace:      sessionLifetimeGrace,
@@ -260,7 +261,7 @@ func deviceSettingsToResource(d *schema.ResourceData, m *DeviceSettings) error {
 	d.Set("vpn_login_browser", m.VPNLoginBrowser)
 	d.Set("enabled", m.Enabled)
 	d.Set("apply_on_org", m.ApplyOnOrg)
-	d.Set("split_tunnel", m.SplitTunnel)
+	d.Set("tunnel_mode", m.TunnelMode)
 	d.Set("protocol_selection_lifetime", m.ProtocolSelectionLifetime)
 	d.Set("session_lifetime", m.SessionLifetime)
 	d.Set("session_lifetime_grace", m.SessionLifetimeGrace)
