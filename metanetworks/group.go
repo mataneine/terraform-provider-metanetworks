@@ -48,7 +48,7 @@ func groupToResource(d *schema.ResourceData, m *Group) error {
 // GetGroups ...
 func (c *Client) GetGroups(name string) ([]Group, error) {
 	var groups []Group
-	err := c.Read(groupsEndpoint+"?expand=true&name="+url.QueryEscape(name), &groups)
+	err := c.Read(groupsEndpoint+"?"+disable_pagination+"expand=true&name="+url.QueryEscape(name), &groups)
 
 	if err != nil {
 		return nil, err

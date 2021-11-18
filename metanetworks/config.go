@@ -18,6 +18,7 @@ const (
 	maxIdleConnections int    = 10
 	requestTimeout     int    = 60
 	configPath         string = ".metanetworks/credentials.json"
+	disable_pagination string = "pagination=false&"
 )
 
 // Config ...
