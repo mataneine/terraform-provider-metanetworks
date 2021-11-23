@@ -33,6 +33,10 @@ type User struct {
 	Tags              []map[string]string `json:"tags,omitempty" meta_api:"read_only"`
 }
 
+type Users struct {
+	Items []User `json:"items"`
+}
+
 // userToResource ...
 func userToResource(d *schema.ResourceData, m *User) error {
 	d.Set("description", m.Description)
@@ -60,17 +64,17 @@ func userToResource(d *schema.ResourceData, m *User) error {
 
 // GetUsers ...
 func (c *Client) GetUsers(email string) ([]User, error) {
-	var users []User
+	var users Users
 	err := c.Read(usersEndpoint+"?expand=true&email="+url.QueryEscape(email), &users)
 	if err != nil {
 		return nil, err
 	}
 
-	if email != "" && len(users) == 0 {
+	if email != "" && len(users.Items) == 0 {
 		return nil, fmt.Errorf("Not found: %s", email)
 	}
 
-	return users, nil
+	return users.Items, nil
 }
 
 // GetUser ...
