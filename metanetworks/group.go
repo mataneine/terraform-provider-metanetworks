@@ -29,6 +29,10 @@ type Group struct {
 	OrgID         string   `json:"org_id,omitempty" meta_api:"read_only"`
 }
 
+type Groups struct {
+	Items []Group `json:"items"`
+}
+
 func groupToResource(d *schema.ResourceData, m *Group) error {
 	d.Set("description", m.Description)
 	d.Set("expression", m.Expression)
@@ -47,18 +51,18 @@ func groupToResource(d *schema.ResourceData, m *Group) error {
 
 // GetGroups ...
 func (c *Client) GetGroups(name string) ([]Group, error) {
-	var groups []Group
+	var groups Groups
 	err := c.Read(groupsEndpoint+"?expand=true&name="+url.QueryEscape(name), &groups)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if name != "" && len(groups) == 0 {
+	if name != "" && len(groups.Items) == 0 {
 		return nil, fmt.Errorf("Not found: %s", name)
 	}
 
-	return groups, nil
+	return groups.Items, nil
 }
 
 // GetGroup ...
