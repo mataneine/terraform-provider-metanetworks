@@ -144,32 +144,5 @@ func resourceRoutingGroupAttachmentDelete(d *schema.ResourceData, m interface{})
 	}
 
 	_, err = client.UpdateRoutingGroup(routingGroupID, routingGroup)
-
-	createStateConf := &resource.StateChangeConf{
-		Pending:    []string{"Pending"},
-		Target:     []string{"Completed"},
-		Timeout:    1 * time.Minute,
-		MinTimeout: 5 * time.Second,
-		Delay:      3 * time.Second,
-		Refresh: func() (interface{}, string, error) {
-			routingGroup, err := client.GetRoutingGroup(routingGroupID)
-			if err != nil {
-				return 0, "", err
-			}
-
-			for i := 0; i < len(routingGroup.MappedElements); i++ {
-				if routingGroup.MappedElements[i] == elementID {
-					return routingGroup, "Pending", nil
-				}
-			}
-			return routingGroup, "Completed", nil
-		},
-	}
-
-	_, err = createStateConf.WaitForState()
-	if err != nil {
-		return fmt.Errorf("Error waiting for routing group attachment deletion (%s) (%s)", routingGroupID, err)
-	}
-
 	return err
 }
