@@ -3,7 +3,9 @@ package metanetworks
 import (
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -53,6 +55,32 @@ func resourceMetaportAttachmentCreate(d *schema.ResourceData, m interface{}) err
 	_, err = client.UpdateMetaPort(metaportID, metaport)
 	if err != nil {
 		return err
+	}
+
+	createStateConf := &resource.StateChangeConf{
+		Pending:    []string{"Pending"},
+		Target:     []string{"Completed"},
+		Timeout:    1 * time.Minute,
+		MinTimeout: 5 * time.Second,
+		Delay:      3 * time.Second,
+		Refresh: func() (interface{}, string, error) {
+			metaport, err := client.GetMetaPort(metaportID)
+			if err != nil {
+				return 0, "", err
+			}
+
+			for i := 0; i < len(metaport.MappedElements); i++ {
+				if metaport.MappedElements[i] == elementID {
+					return metaport, "Completed", nil
+				}
+			}
+			return metaport, "Pending", nil
+		},
+	}
+
+	_, err = createStateConf.WaitForState()
+	if err != nil {
+		return fmt.Errorf("Error waiting for metaport attachment creation (%s) (%s)", metaportID, err)
 	}
 
 	d.SetId(fmt.Sprintf("%s_%s", metaportID, elementID))
