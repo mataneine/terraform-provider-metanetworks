@@ -19,7 +19,7 @@ provider "metanetworks" {
 terraform {
   required_providers {
     metanetworks = {
-      source  = "registry.terraform.local/mataneine/metanetworks"
+      source  = "localhost/mataneine/metanetworks"
       version = "1.0.0-pre"
     }
   }
@@ -55,7 +55,7 @@ Usage:
 ```hcl
 provider "metanetworks" {
   org        = "example_organization"
-  api_key = "my-api-key"
+  api_key    = "my-api-key"
   api_secret = "my-api-secret"
 }
 ```
