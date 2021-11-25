@@ -7,43 +7,43 @@ import (
 func resourcePostureCheck() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"action": &schema.Schema{
+			"action": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"osquery": &schema.Schema{
+			"osquery": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"platform": &schema.Schema{
+			"platform": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"user_message_on_fail": &schema.Schema{
+			"user_message_on_fail": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"interval": &schema.Schema{
+			"interval": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"check": &schema.Schema{
+			"check": {
 				Type: schema.TypeList,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"min_version": &schema.Schema{
+						"min_version": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"type": &schema.Schema{
+						"type": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
@@ -51,40 +51,40 @@ func resourcePostureCheck() *schema.Resource {
 				},
 				Optional: true,
 			},
-			"enabled": &schema.Schema{
+			"enabled": {
 				Type:     schema.TypeBool,
 				Default:  true,
 				Optional: true,
 			},
-			"apply_to_org": &schema.Schema{
+			"apply_to_org": {
 				Type:     schema.TypeBool,
 				Default:  true,
 				Optional: true,
 			},
-			"exempt_sources": &schema.Schema{
+			"exempt_sources": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
-			"sources": &schema.Schema{
+			"sources": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
-			"when": &schema.Schema{
+			"when": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Required: true,
 			},
-			"created_at": &schema.Schema{
+			"created_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"modified_at": &schema.Schema{
+			"modified_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"id": &schema.Schema{
+			"id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
