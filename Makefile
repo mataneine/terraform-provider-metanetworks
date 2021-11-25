@@ -1,5 +1,5 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
-HOSTNAME=registry.terraform.local
+HOSTNAME=localhost
 NAMESPACE=mataneine
 NAME=metanetworks
 BINARY=terraform-provider-${NAME}
