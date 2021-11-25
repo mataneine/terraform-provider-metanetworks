@@ -16,6 +16,15 @@ provider "metanetworks" {
   org = "example_organization"
 }
 
+terraform {
+  required_providers {
+    metanetworks = {
+      source  = "localhost/mataneine/metanetworks"
+      version = "1.0.0-pre"
+    }
+  }
+}
+
 # Example resource configuration
 resource "metanetworks_resource" "example" {
   # ...
@@ -46,8 +55,8 @@ Usage:
 ```hcl
 provider "metanetworks" {
   org        = "example_organization"
-  access_key = "my-api-key"
-  secret_key = "my-api-secret"
+  api_key    = "my-api-key"
+  api_secret = "my-api-secret"
 }
 ```
 
@@ -87,8 +96,8 @@ provider "metanetworks" {}
 credentials.json file:
 ```json
 {
-	"api_key":    "my-api-key",
-	"api_secret": "my-api-secret",
-	"org":        "example_organization"
+  "api_key":    "my-api-key",
+  "api_secret": "my-api-secret",
+  "org":        "example_organization"
 }
 ```
