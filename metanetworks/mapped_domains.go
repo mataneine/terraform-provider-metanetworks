@@ -1,8 +1,9 @@
 package metanetworks
 
-import "encoding/json"
-
-import "log"
+import (
+	"encoding/json"
+	"log"
+)
 
 // MappedDomain ...
 type MappedDomain struct {
