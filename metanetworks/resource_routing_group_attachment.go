@@ -55,6 +55,12 @@ func resourceRoutingGroupAttachmentCreate(d *schema.ResourceData, m interface{})
 		return err
 	}
 
+	_, err = WaitRoutingGroupAttachmentCreate(client, routingGroupID, elementID)
+
+	if err != nil {
+		return fmt.Errorf("Error waiting for routing group attachment creation (%s) (%s)", routingGroupID, err)
+	}
+
 	d.SetId(fmt.Sprintf("%s_%s", routingGroupID, elementID))
 
 	return resourceRoutingGroupAttachmentRead(d, m)
