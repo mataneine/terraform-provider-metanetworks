@@ -5,6 +5,9 @@ import (
 	"errors"
 	"log"
 	"reflect"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const (
@@ -107,4 +110,39 @@ func (c *Client) GenerateMetaPortOTAC(metaportID string) (string, error) {
 	}
 
 	return createdOTAC.Secret, nil
+}
+
+func StatusMetaportAttachmentCreate(client *Client, metaportID string, elementID string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		var metaport *MetaPort
+		metaport, err := client.GetMetaPort(metaportID)
+		if err != nil {
+			return 0, "", err
+		}
+
+		for i := 0; i < len(metaport.MappedElements); i++ {
+			if metaport.MappedElements[i] == elementID {
+				return metaport, "Completed", nil
+			}
+		}
+		return metaport, "Pending", nil
+	}
+}
+
+func WaitMetaportAttachmentCreate(client *Client, metaportID string, elementID string) (*Client, error) {
+	createStateConf := &resource.StateChangeConf{
+		Pending:    []string{"Pending"},
+		Target:     []string{"Completed"},
+		Timeout:    5 * time.Minute,
+		MinTimeout: 5 * time.Second,
+		Delay:      3 * time.Second,
+		Refresh:    StatusMetaportAttachmentCreate(client, metaportID, elementID),
+	}
+
+	_, err := createStateConf.WaitForState()
+	if err != nil {
+		return nil, err
+	}
+
+	return client, err
 }

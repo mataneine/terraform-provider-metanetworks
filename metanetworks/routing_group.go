@@ -3,6 +3,9 @@ package metanetworks
 import (
 	"errors"
 	"log"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const (
@@ -71,4 +74,39 @@ func (c *Client) DeleteRoutingGroup(routingGroupID string) error {
 	}
 
 	return nil
+}
+
+func StatusRoutingGroupAttachmentCreate(client *Client, routingGroupID string, elementID string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		var routingGroup *RoutingGroup
+		routingGroup, err := client.GetRoutingGroup(routingGroupID)
+		if err != nil {
+			return 0, "", err
+		}
+
+		for i := 0; i < len(routingGroup.MappedElements); i++ {
+			if routingGroup.MappedElements[i] == elementID {
+				return routingGroup, "Completed", nil
+			}
+		}
+		return routingGroup, "Pending", nil
+	}
+}
+
+func WaitRoutingGroupAttachmentCreate(client *Client, routingGroupID string, elementID string) (*Client, error) {
+	createStateConf := &resource.StateChangeConf{
+		Pending:    []string{"Pending"},
+		Target:     []string{"Completed"},
+		Timeout:    5 * time.Minute,
+		MinTimeout: 5 * time.Second,
+		Delay:      3 * time.Second,
+		Refresh:    StatusRoutingGroupAttachmentCreate(client, routingGroupID, elementID),
+	}
+
+	_, err := createStateConf.WaitForState()
+	if err != nil {
+		return nil, err
+	}
+
+	return client, err
 }

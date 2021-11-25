@@ -3,7 +3,10 @@ package metanetworks
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -120,9 +123,18 @@ func resourceMetaportAttachmentDelete(d *schema.ResourceData, m interface{}) err
 		}
 	}
 
-	_, err = client.UpdateMetaPort(metaportID, metaport)
+	err = resource.Retry(5*time.Second, func() *resource.RetryError {
+		if _, err := client.UpdateMetaPort(metaportID, metaport); err != nil {
+			if !strings.Contains(err.Error(), "is busy. Try again later.") {
+				return resource.NonRetryableError(err)
+			}
+			return resource.RetryableError(err)
+		}
+		return nil
+	})
+
 	if err != nil {
-		return err
+		return fmt.Errorf("Error in metaport attachment deletion (%s) (%s)", metaportID, err)
 	}
 
 	return nil
