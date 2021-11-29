@@ -1,6 +1,7 @@
 package metanetworks
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -87,6 +88,11 @@ func resourceProtocolGroupCreate(d *schema.ResourceData, m interface{}) error {
 	newProtocolGroup, err := client.CreateProtocolGroup(&protocolGroup)
 	if err != nil {
 		return err
+	}
+
+	_, err = WaitProtocolGroupCreate(client, newProtocolGroup.ID)
+	if err != nil {
+		return fmt.Errorf("Error waiting for protocol group creation (%s) (%s)", newProtocolGroup.ID, err)
 	}
 
 	d.SetId(newProtocolGroup.ID)

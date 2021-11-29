@@ -1,6 +1,8 @@
 package metanetworks
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -88,6 +90,11 @@ func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
 	newPolicy, err := client.CreatePolicy(&policy)
 	if err != nil {
 		return err
+	}
+
+	_, err = WaitNetworkElementCreate(client, newPolicy.ID)
+	if err != nil {
+		return fmt.Errorf("Error waiting for policy creation (%s) (%s)", newPolicy.ID, err)
 	}
 
 	d.SetId(newPolicy.ID)

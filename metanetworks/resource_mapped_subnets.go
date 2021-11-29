@@ -1,6 +1,8 @@
 package metanetworks
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -92,6 +94,11 @@ func resourceMappedSubnetsCreate(d *schema.ResourceData, m interface{}) error {
 	newMappedSubnets, err := client.CreateNetworkElement(&networkElement)
 	if err != nil {
 		return err
+	}
+
+	_, err = WaitNetworkElementCreate(client, newMappedSubnets.ID)
+	if err != nil {
+		return fmt.Errorf("Error waiting for mapped subnet creation (%s) (%s)", newMappedSubnets.ID, err)
 	}
 
 	d.SetId(newMappedSubnets.ID)

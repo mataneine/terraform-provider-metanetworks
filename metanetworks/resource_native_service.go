@@ -1,6 +1,8 @@
 package metanetworks
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -79,6 +81,10 @@ func resourceNativeServiceCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
+	_, err = WaitNetworkElementCreate(client, newNativeService.ID)
+	if err != nil {
+		return fmt.Errorf("Error waiting for native service creation (%s) (%s)", newNativeService.ID, err)
+	}
 	d.SetId(newNativeService.ID)
 
 	err = nativeServiceToResource(d, newNativeService)

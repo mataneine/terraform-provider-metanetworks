@@ -3,7 +3,9 @@ package metanetworks
 import (
 	"encoding/json"
 	"log"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
 )
@@ -150,4 +152,33 @@ func (c *Client) SetNetworkElementTags(d *schema.ResourceData) error {
 	}
 
 	return nil
+}
+
+func StatusNetworkElementCreate(client *Client, networkElementID string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		var metaport *MetaPort
+		_, err := client.GetNetworkElement(networkElementID)
+		if err != nil {
+			return metaport, "Pending", nil
+		}
+		return metaport, "Completed", nil
+	}
+}
+
+func WaitNetworkElementCreate(client *Client, networkElementID string) (*Client, error) {
+	createStateConf := &resource.StateChangeConf{
+		Pending:    []string{"Pending"},
+		Target:     []string{"Completed"},
+		Timeout:    30 * time.Second,
+		MinTimeout: 5 * time.Second,
+		Delay:      2 * time.Second,
+		Refresh:    StatusNetworkElementCreate(client, networkElementID),
+	}
+
+	_, err := createStateConf.WaitForState()
+	if err != nil {
+		return nil, err
+	}
+
+	return client, err
 }
