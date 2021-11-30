@@ -92,7 +92,7 @@ func resourcePolicyCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	_, err = WaitNetworkElementCreate(client, newPolicy.ID)
+	_, err = WaitPolicyCreate(client, newPolicy.ID)
 	if err != nil {
 		return fmt.Errorf("Error waiting for policy creation (%s) (%s)", newPolicy.ID, err)
 	}
