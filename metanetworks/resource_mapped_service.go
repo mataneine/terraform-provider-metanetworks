@@ -1,6 +1,8 @@
 package metanetworks
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -76,6 +78,11 @@ func resourceMappedServiceCreate(d *schema.ResourceData, m interface{}) error {
 	newMappedService, err := client.CreateNetworkElement(&networkElement)
 	if err != nil {
 		return err
+	}
+
+	_, err = WaitNetworkElementCreate(client, newMappedService.ID)
+	if err != nil {
+		return fmt.Errorf("Error waiting for mapped service creation (%s) (%s)", newMappedService.ID, err)
 	}
 
 	d.SetId(newMappedService.ID)

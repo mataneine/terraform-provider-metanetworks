@@ -3,6 +3,9 @@ package metanetworks
 import (
 	"errors"
 	"log"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const (
@@ -72,4 +75,33 @@ func (c *Client) DeletePolicy(policyID string) error {
 	}
 
 	return nil
+}
+
+func StatusPolicyCreate(client *Client, PolicyID string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		var metaport *MetaPort
+		_, err := client.GetPolicy(PolicyID)
+		if err != nil {
+			return metaport, "Pending", nil
+		}
+		return metaport, "Completed", nil
+	}
+}
+
+func WaitPolicyCreate(client *Client, PolicyID string) (*Client, error) {
+	createStateConf := &resource.StateChangeConf{
+		Pending:    []string{"Pending"},
+		Target:     []string{"Completed"},
+		Timeout:    30 * time.Second,
+		MinTimeout: 5 * time.Second,
+		Delay:      2 * time.Second,
+		Refresh:    StatusPolicyCreate(client, PolicyID),
+	}
+
+	_, err := createStateConf.WaitForState()
+	if err != nil {
+		return nil, err
+	}
+
+	return client, err
 }

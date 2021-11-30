@@ -33,8 +33,8 @@ func resourceRoutingGroupAttachmentCreate(d *schema.ResourceData, m interface{})
 	elementID := d.Get("network_element_id").(string)
 	routingGroupID := d.Get("routing_group_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
+	metanetworksMutexKV.Lock(routingGroupID)
+	defer metanetworksMutexKV.Unlock(routingGroupID)
 
 	var routingGroup *RoutingGroup
 	routingGroup, err := client.GetRoutingGroup(routingGroupID)
@@ -72,9 +72,6 @@ func resourceRoutingGroupAttachmentRead(d *schema.ResourceData, m interface{}) e
 	elementID := d.Get("network_element_id").(string)
 	routingGroupID := d.Get("routing_group_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
-
 	var routingGroup *RoutingGroup
 	routingGroup, err := client.GetRoutingGroup(routingGroupID)
 	if err != nil {
@@ -104,8 +101,8 @@ func resourceRoutingGroupAttachmentDelete(d *schema.ResourceData, m interface{})
 	elementID := d.Get("network_element_id").(string)
 	routingGroupID := d.Get("routing_group_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
+	metanetworksMutexKV.Lock(routingGroupID)
+	defer metanetworksMutexKV.Unlock(routingGroupID)
 
 	var routingGroup *RoutingGroup
 	routingGroup, err := client.GetRoutingGroup(routingGroupID)

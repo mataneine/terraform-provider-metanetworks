@@ -33,8 +33,8 @@ func resourcePeeringAttachmentCreate(d *schema.ResourceData, m interface{}) erro
 	elementID := d.Get("network_element_id").(string)
 	peeringID := d.Get("peering_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
+	metanetworksMutexKV.Lock(peeringID)
+	defer metanetworksMutexKV.Unlock(peeringID)
 
 	var peering *Peering
 	peering, err := client.GetPeering(peeringID)
@@ -66,9 +66,6 @@ func resourcePeeringAttachmentRead(d *schema.ResourceData, m interface{}) error 
 	elementID := d.Get("network_element_id").(string)
 	peeringID := d.Get("peering_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
-
 	var peering *Peering
 	peering, err := client.GetPeering(peeringID)
 	if err != nil {
@@ -98,8 +95,8 @@ func resourcePeeringAttachmentDelete(d *schema.ResourceData, m interface{}) erro
 	elementID := d.Get("network_element_id").(string)
 	peeringID := d.Get("peering_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
+	metanetworksMutexKV.Lock(peeringID)
+	defer metanetworksMutexKV.Unlock(peeringID)
 
 	var peering *Peering
 	peering, err := client.GetPeering(peeringID)

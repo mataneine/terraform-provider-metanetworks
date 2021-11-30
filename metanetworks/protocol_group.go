@@ -4,6 +4,9 @@ import (
 	"errors"
 	"log"
 	"reflect"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const (
@@ -78,4 +81,33 @@ func (c *Client) DeleteProtocolGroup(protocolGroupID string) error {
 	}
 
 	return nil
+}
+
+func StatusProtocolGroupCreate(client *Client, ProtocolGroupID string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		var metaport *MetaPort
+		_, err := client.GetProtocolGroup(ProtocolGroupID)
+		if err != nil {
+			return metaport, "Pending", nil
+		}
+		return metaport, "Completed", nil
+	}
+}
+
+func WaitProtocolGroupCreate(client *Client, ProtocolGroupID string) (*Client, error) {
+	createStateConf := &resource.StateChangeConf{
+		Pending:    []string{"Pending"},
+		Target:     []string{"Completed"},
+		Timeout:    30 * time.Second,
+		MinTimeout: 5 * time.Second,
+		Delay:      2 * time.Second,
+		Refresh:    StatusProtocolGroupCreate(client, ProtocolGroupID),
+	}
+
+	_, err := createStateConf.WaitForState()
+	if err != nil {
+		return nil, err
+	}
+
+	return client, err
 }
