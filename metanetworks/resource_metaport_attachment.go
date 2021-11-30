@@ -36,8 +36,8 @@ func resourceMetaportAttachmentCreate(d *schema.ResourceData, m interface{}) err
 	elementID := d.Get("network_element_id").(string)
 	metaportID := d.Get("metaport_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
+	metanetworksMutexKV.Lock(metaportID)
+	defer metanetworksMutexKV.Unlock(metaportID)
 
 	var metaport *MetaPort
 	metaport, err := client.GetMetaPort(metaportID)
@@ -75,9 +75,6 @@ func resourceMetaportAttachmentRead(d *schema.ResourceData, m interface{}) error
 	elementID := d.Get("network_element_id").(string)
 	metaportID := d.Get("metaport_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
-
 	var metaport *MetaPort
 	metaport, err := client.GetMetaPort(metaportID)
 	if err != nil {
@@ -106,8 +103,8 @@ func resourceMetaportAttachmentDelete(d *schema.ResourceData, m interface{}) err
 	elementID := d.Get("network_element_id").(string)
 	metaportID := d.Get("metaport_id").(string)
 
-	metanetworksMutexKV.Lock(d.Id())
-	defer metanetworksMutexKV.Unlock(d.Id())
+	metanetworksMutexKV.Lock(metaportID)
+	defer metanetworksMutexKV.Unlock(metaportID)
 
 	var metaport *MetaPort
 	metaport, err := client.GetMetaPort(metaportID)
