@@ -39,12 +39,12 @@ func resourceMappedSubnetsMappedHostSet(d *schema.ResourceData, m interface{}) e
 
 	mappedSubnetsID := d.Get("mapped_subnets_id").(string)
 	name := d.Get("name").(string)
-	domain := d.Get("mapped_host").(string)
-	enterpriseDNS := d.Get("enterprise_dns").(bool)
+	host := d.Get("mapped_host").(string)
+	ignoreBounds := d.Get("ignore_bounds").(bool)
 
-	MappedHost := MappedHost{
-		MappedHost:    domain,
-		EnterpriseDNS: enterpriseDNS,
+	mappedHost := MappedHost{
+		MappedHost:    host,
+		IgnoreBounds: ignoreBounds,
 	}
 	_, err := client.SetNetworkElementMappedHosts(mappedSubnetsID, name, &mappedHost)
 	if err != nil {
@@ -103,7 +103,7 @@ func resourceMappedSubnetsMappedHostDelete(d *schema.ResourceData, m interface{}
 func mappedSubnetsMappedHostToResource(d *schema.ResourceData, m *MappedHost) error {
 	d.Set("name", m.Name)
 	d.Set("mapped_host", m.MappedHost)
-	d.Set("enterprise_dns", m.EnterpriseDNS)
+	d.Set("ignore_bounds", m.IgnoreBounds)
 
 	d.SetId(m.Name)
 

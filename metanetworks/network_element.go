@@ -137,7 +137,7 @@ func (c *Client) DeleteNetworkElementMappedDomains(networkElementID string, name
 }
 
 func (c *Client) SetNetworkElementMappedHosts(networkElementID string, name string, mappedHost *MappedHost) (*MappedHost, error) {
-	resp, err := c.SetMappedHost(networkElementsEndpoint+"/"+networkElementID+"/mapped_hosts/"+name, *mappedDomain)
+	resp, err := c.SetMappedHost(networkElementsEndpoint+"/"+networkElementID+"/mapped_hosts/"+name, *mappedHost)
 	if err != nil {
 		return nil, err
 	}
